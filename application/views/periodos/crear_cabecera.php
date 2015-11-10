@@ -150,7 +150,7 @@
 		    font-weight: bold;
 		    padding: 2px 20px;
 		}
-		 label {
+		table.cabecera label {
 		    color: #000000;
 		    float: left;
 		    font-size: 15px;
@@ -161,7 +161,7 @@
 		    width: 140px;
 		}
 
-		 .error{
+		table.cabecera .error{
 			color: #000000;
 		    background: none repeat scroll 0 0 #FF9E9E;
 		    border: 1px solid #AA8888;
@@ -170,7 +170,7 @@
 		    padding: 1px;
 		    text-align: center;
 		}
-		 .ok{
+		table.cabecera .ok{
 			color: #000000;
 		    background: none repeat scroll 0 0 #9EFF9E;
 		    border: 1px solid #88AA88;
@@ -179,7 +179,8 @@
 		    padding: 1px;
 		    text-align: center;
 		}
-		 .campo_obligatorio {
+		
+		table.cabecera .campo_obligatorio {
 		    color: #FF0000;
 		    float: left;
 		    font-size: 11px;
@@ -187,17 +188,12 @@
 		    padding: 0 2px;
 		}
 		
-		 table{
-			margin: 10px;
+		table.cabecera{
+			margin: 10px auto;
 		}
 		
-		 table td{
+		table.cabecera td{
 			padding: 5px 3px;
-		}
-		
-		h3.titulo{
-			border-bottom : solid 1px #ffffee;
-			text-align: center;
 		}
 	</style>
 </head>
@@ -208,148 +204,26 @@
 		echo form_open('');
 		echo form_fieldset('Creación de periodo');
 
-		if($msn)
-			$this->table->add_row(array('data' => $msn, 'colspan' => '2', 'class' => 'ok'));
+		if($mensaje)
+				$this->table->add_row(array('data' => $mensaje, 'colspan' => '2', 'class' => 'ok'));
 
-		//ACTIVIDADES
-		if($actividades){
-			if($actividades->num_rows() > 1)
-				$opciones = array('' => '-----');
-			foreach($actividades->result() as $row)
-				$opciones[$row->id_actividad] = $row->actividad;
-		}else{
-			$opciones = array('' => '-----');	
-		}
-		
-		$this->table->add_row(array(
-			form_label('Actividad:'),
-			form_dropdown('slc_actividad', $opciones, set_value('slc_actividad'), 'id = slc_actividad autofocus=autofocus') .
-			form_error('slc_actividad', '<div class=error>', '</div>')
-		));
-
-
-		//FACULTAD
-		if($facultades){
-			if($facultades->num_rows() > 1)
-				$opciones_facultad = array('' => '-----');
-			foreach($facultades->result() as $row)
-				$opciones_facultad[$row->id_facultad] = $row->facultad;
-		}else{
-			$opciones_facultad = array('' => '-----');	
-		}
-
-		$this->table->add_row(array(
-			form_label('Facultad:'),
-			form_dropdown('slc_facultad', $opciones_facultad, set_value('slc_facultad'), 'id = slc_facultad') .
-			form_error('slc_facultad', '<div class=error>', '</div>')
-		));
-
-		//SEDES
-		if($sedes){
-			if($sedes->num_rows() > 1)
-				$opciones_sede = array('' => '-----');
-			foreach($sedes->result() as $row)
-				$opciones_sede[$row->id_sede] = $row->sede;		
-		}else{
-			$opciones_sede = array('' => '-----');
-		}
-
-		$this->table->add_row(array(
-			form_label('Sedes:'),
-			form_dropdown('slc_sede', $opciones_sede, set_value('slc_sede'), 'id = slc_sede') .
-			form_error('slc_sede', '<div class=error>', '</div>')
-		));
-		
-		//CARRERA
-		if($carreras){
-			if($carreras->num_rows() > 1)
-				$opciones_carrera = array('todas' => 'Todas');
-			foreach($carreras->result() as $row)
-				$opciones_carrera[$row->id_carrera] = $row->carrera;		
-		}else{
-			$opciones_carrera = array('' => '-----');
-		}
-
-		$this->table->add_row(array(
-			form_label('Carrera:'),
-			form_dropdown('slc_carrera', $opciones_carrera, set_value('slc_carrera'), 'id = slc_carrera') .
-			form_error('slc_carrera', '<div class=error>', '</div>')
-		));
-
-		//SEMESTRES
-		$opciones_semestre = array(null => '-----', 'impar' => 'Impar', 'par' => 'Par', 'cpi' => 'CPI');
-/*		if($semestres){
-			if($semestres->num_rows() > 1)
-				$opciones['todos'] = 'Todos';
-			foreach($semestres->result()  as $row)
-				$opciones[$row->id_semestre] = $row->semestre;
-		}
-*/
-		$this->table->add_row(array(
-			form_label('Semestre:'),
-			form_dropdown('slc_semestre', $opciones_semestre, set_value('slc_semestre'), 'id = slc_semestre') .
-			form_error('slc_semestre', '<div class=error>', '</div>')
-		));
-/*
-		//ASIGNATURAS
-		if($asignaturas){
-			if($asignaturas->num_rows() > 1)
-				$opciones = array('todos' => 'Todos');
-			foreach($asignaturas->result()  as $row)
-				$opciones[$row->id_asignatura] = $row->asignatura;
-		}else{
-			$opciones = array(null => '-----');
-		}
-
-		$this->table->add_row(array(
-			form_label('Asignatura:'),
-			form_dropdown('slc_asignatura', $opciones, set_value('slc_asignatura'), 'id = slc_asignatura') .
-			form_error('slc_asignatura', '<div class=error>', '</div>')
-		));
-*/
 		//PERIODO
-		$slc_periodo = array('' => '-----');
-		if($creacion){
-			$anho	= date('Y', strtotime($creacion));
-			for($x = date('Y'); $x >= $anho; $x--)
-				$slc_periodo[$x] = $x;
-		}
-
-		$this->table->add_row(array(
-			form_label('Periodo:'),
-			form_dropdown('slc_periodo', $slc_periodo, set_value('slc_periodo'), 'id = slc_periodo') .
-			form_error('slc_periodo', '<div class=error>', '</div>')
-		));
-
-		//INICIO
-		$txt_inicio = array(
-			'name'	=> 'txt_inicio',
-			'id'	=> 'txt_inicio',
-			'value'	=> set_value('txt_inicio'),
-			'type'	=> 'date',
+		$txt_periodo = array(
+			'type' 		=> 'text',
+			'name'		=> 'txt_periodo',
+			'id' 		=> 'txt_periodo',
+			'value'		=> set_value('txt_periodo'),
+			'size' 		=> '4',
+			'maxlength'	=> '4',
 		);
 		
 		$this->table->add_row(array(
-			form_label('Inicio:'),
-			form_input($txt_inicio) .
-			form_error('txt_inicio', '<div class=error>', '</div>')
-		));		
-		
-		//FIN
-		$txt_fin = array(
-			'name'	=> 'txt_fin',
-			'id'	=> 'txt_fin',
-			'value'	=> set_value('txt_fin'),
-			'type'	=> 'date',
-		);
-		
-		$this->table->add_row(array(
-			form_label('Fin:'),
-			form_input($txt_fin) .
-			form_error('txt_fin', '<div class=error>', '</div>')
+			form_label('Periodo:', 'txt_periodo'),
+			form_input($txt_periodo) .
+			form_error('txt_periodo', '<div class=error>', '</div>')
 		));
 
-		//CAMPO BOTON
+		//BOTON GUARDAR
 		$boton = array(
 			'type' 	=> 'submit',
 			'id' 	=> 'btn_guardar',
@@ -358,18 +232,13 @@
 		);
 
 		$this->table->add_row(array(
-			'',
+			false,
 			form_input($boton)
 		));
 
-		$this->table->add_row(array('data' => $detalle, 'colspan' => '2', 'id' => 'detalle'));
-/*		
-		if($detalle)
-			$this->table->add_row(array('data' => $detalle, 'colspan' => '2', 'id' => 'detalle'))	;
-		else
-			$this->table->add_row(array('data' => '', 'colspan' => '2', 'id' => 'detalle'))	;
-*/
-		$this->table->set_template(array('table_open' => '<table cellspacing= "0", border="0">'));
+		$this->table->add_row(array('data' => $detalles, 'colspan' => '2', 'id' => 'detalles'));
+
+		$this->table->set_template(array('table_open' => '<table cellspacing= "0", border="0" class="cabecera">'));
 		echo $this->table->generate();
 		
 		echo form_fieldset_close();
