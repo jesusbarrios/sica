@@ -871,7 +871,7 @@ class User extends CI_Model{
 		if($predeterminado)
 			$this->db->where('t1.predeterminado', $predeterminado);
 		if($estado)
-			$this->db->where('t1.usuario_estado', $estado);
+			$this->db->where('t1.estado', $estado);
 
 		$this->db->join('roles as t2', 't2.id_rol = t1.id_rol');
 		$this->db->join('personas as t3', 't3.id_persona = t1.id_persona');
