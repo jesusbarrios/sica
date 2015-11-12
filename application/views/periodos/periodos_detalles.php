@@ -11,7 +11,7 @@
 				$('#detalles').html('Cargando....');
 				id_periodo = this.id;
 				if(confirm('Cormirmas la eliminación del periodo "' + id_periodo + '"?')){
-					$.post('<?=base_url()?>index.php/periodos/crear/eliminar', {txt_periodo : id_periodo}, function (respuesta) {
+					$.post('<?=base_url()?>index.php/periodos/periodos/eliminar', {txt_periodo : id_periodo}, function (respuesta) {
 						$('#detalles').html(respuesta)
 					});
 				}
@@ -20,7 +20,7 @@
 			$('.deshabilitar').click(function(args) {
 				$('#detalles').html('Cargando....');
 				id_periodo = this.id;
-				$.post('<?=base_url()?>index.php/periodos/crear/cambiar_estado', {txt_periodo : id_periodo, slc_estado : 0}, function (respuesta) {
+				$.post('<?=base_url()?>index.php/periodos/periodos/cambiar_estado', {txt_periodo : id_periodo, slc_estado : 0}, function (respuesta) {
 					$('#detalles').html(respuesta)
 				});
 			})
@@ -28,7 +28,7 @@
 			$('.habilitar').click(function(args) {
 				$('#detalles').html('Cargando....');
 				id_periodo = this.id;
-				$.post('<?=base_url()?>index.php/periodos/crear/cambiar_estado', {txt_periodo : id_periodo, slc_estado : 1}, function (respuesta) {
+				$.post('<?=base_url()?>index.php/periodos/periodos/cambiar_estado', {txt_periodo : id_periodo, slc_estado : 1}, function (respuesta) {
 					$('#detalles').html(respuesta)
 				});
 			})

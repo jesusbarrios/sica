@@ -2,7 +2,7 @@
 
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Crear extends CI_Controller {
+class Periodos extends CI_Controller {
 
 	function __construct(){
 
@@ -35,14 +35,14 @@ class Crear extends CI_Controller {
 		}
 
 		$periodos 	= $this->m_periodo->get_periodos();
-		$detalles	= $this->load->view('periodos/crear_detalles', array('periodos' => $periodos), true);
+		$detalles	= $this->load->view('periodos/periodos_detalles', array('periodos' => $periodos), true);
 
 		$datos = array(
 			'mensaje'	=> $mensaje,
 			'detalles'	=> $detalles,
 		);
 
-		$this->load->view('periodos/crear_cabecera', $datos, FALSE);
+		$this->load->view('periodos/periodos_cabecera', $datos, FALSE);
 	}
 
 	function validar_periodo($periodo){
@@ -56,7 +56,7 @@ class Crear extends CI_Controller {
 		$id_periodo = $this->input->post('txt_periodo');
 		$this->m_periodo->delete_periodos($id_periodo);
 		$periodos 	= $this->m_periodo->get_periodos();
-		$this->load->view('periodos/crear_detalles', array('periodos' => $periodos), false);
+		$this->load->view('periodos/periodos_detalles', array('periodos' => $periodos), false);
 	}
 
 	function cambiar_estado(){
@@ -64,6 +64,6 @@ class Crear extends CI_Controller {
 		$estado 	= $this->input->post('slc_estado');
 		$this->m_periodo->update_periodos($id_periodo, $estado);
 		$periodos 	= $this->m_periodo->get_periodos();
-		$this->load->view('periodos/crear_detalles', array('periodos' => $periodos), false);
+		$this->load->view('periodos/periodos_detalles', array('periodos' => $periodos), false);
 	}
 }

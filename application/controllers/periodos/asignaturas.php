@@ -2,7 +2,7 @@
 
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Inscripcion_asignatura extends CI_Controller {
+class Asignaturas extends CI_Controller {
 
 	function __construct(){
 
@@ -22,7 +22,6 @@ class Inscripcion_asignatura extends CI_Controller {
 		$this->load->view('header', FALSE);
 		$this->load->view('menu', FALSE);
 
-
 		$id_periodo 	= $this->input->post('slc_periodo');
         $id_sede 		= $this->input->post('slc_sede');
         $id_carrera 	= $this->input->post('slc_carrera');
@@ -41,10 +40,11 @@ class Inscripcion_asignatura extends CI_Controller {
 			$this->form_validation->set_rules('txt_desde', '<b>desde</b>', 'required');
 			$this->form_validation->set_rules('txt_hasta', '<b>hasta</b>', 'required');
 		}
+
 		$this->form_validation->set_rules('txt_cierre', '<b>cierre</b>', 'required');
 
 		$slc_periodo 	= $this->cargar_slc_periodo(true);
-		$session_data = $this->session->userdata('logged_in');
+		$session_data 	= $this->session->userdata('logged_in');
 		if($session_data["id_rol"] == 1){
 			$this->form_validation->set_rules('slc_facultad', '<b>facultad</b>', 'required');
 			$this->form_validation->set_rules('slc_sede', '<b>sede</b>', 'required');
@@ -100,7 +100,7 @@ class Inscripcion_asignatura extends CI_Controller {
 			'detalles'		=> $detalles,
 			'mensaje'		=> $mensaje,
 		);
-		$this->load->view('periodos/inscripcion_asignatura_cabecera', $datos, FALSE);
+		$this->load->view('periodos/asignaturas_cabecera', $datos, FALSE);
 
 	}
 
@@ -138,7 +138,7 @@ class Inscripcion_asignatura extends CI_Controller {
 	}
 
 	function cargar_slc_periodo($retornar = false){
-		$periodos		= $this->m_periodo->get_periodos();
+		$periodos		= $this->m_periodo->get_periodos(false, true);
 
 		if($retornar){
 			$slc_periodo 	= array('' => '-----');

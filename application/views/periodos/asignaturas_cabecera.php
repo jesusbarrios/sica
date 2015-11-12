@@ -27,7 +27,7 @@
 	    	$('#slc_facultad').change(function() {
 	  			facultad 	= $(this).val();
    				if(facultad){
-   					$.post('<?=base_url()?>index.php/periodos/inscripcion_asignatura/cargar_slc_sede', {slc_facultad : facultad}, function (respuesta) {
+   					$.post('<?=base_url()?>index.php/periodos/asignaturas/cargar_slc_sede', {slc_facultad : facultad}, function (respuesta) {
 						$('#slc_sede').html(respuesta);
 					});
 				}else{
@@ -43,7 +43,7 @@
     			facultad 	= $('#slc_facultad').val();
 	  			sede 		= $(this).val();
    				if(sede){
-   					$.post('<?=base_url()?>index.php/periodos/inscripcion_asignatura/cargar_slc_carrera', {slc_facultad : facultad, slc_sede : sede}, function (respuesta) {
+   					$.post('<?=base_url()?>index.php/periodos/asignaturas/cargar_slc_carrera', {slc_facultad : facultad, slc_sede : sede}, function (respuesta) {
 						$('#slc_carrera').html(respuesta);
 					});
 				}else{
@@ -58,7 +58,7 @@
     			facultad 	= $('#slc_facultad').val();
 	  			carrera		= $(this).val();
    				if(carrera){
-   					$.post('<?=base_url()?>index.php/periodos/inscripcion_asignatura/cargar_slc_semestre', {slc_facultad : facultad, slc_carrera : carrera}, function (respuesta) {
+   					$.post('<?=base_url()?>index.php/periodos/asignaturas/cargar_slc_semestre', {slc_facultad : facultad, slc_carrera : carrera}, function (respuesta) {
 						$('#slc_semestre').html(respuesta);
 					});
 				}else{
@@ -73,7 +73,7 @@
 	  			carrera		= $('#slc_carrera').val();
 	  			semestre	= $(this).val();
    				if(semestre){
-   					$.post('<?=base_url()?>index.php/periodos/inscripcion_asignatura/cargar_slc_asignatura', {slc_facultad : facultad, slc_carrera : carrera, slc_semestre : semestre}, function (respuesta) {
+   					$.post('<?=base_url()?>index.php/periodos/asignaturas/cargar_slc_asignatura', {slc_facultad : facultad, slc_carrera : carrera, slc_semestre : semestre}, function (respuesta) {
 						$('#slc_asignatura').html(respuesta);
 						
 					});
@@ -90,7 +90,7 @@
 	  			semestre	= $('#slc_semestre').val();
 	  			asignatura	= $(this).val();
    				if(asignatura){
-   					$.post('<?=base_url()?>index.php/periodos/inscripcion_asignatura/actualizar_detalles', {slc_facultad : facultad, slc_sede : sede, slc_carrera : carrera, slc_semestre : semestre, slc_asignatura : asignatura}, function (respuesta) {
+   					$.post('<?=base_url()?>index.php/periodos/asignaturas/actualizar_detalles', {slc_facultad : facultad, slc_sede : sede, slc_carrera : carrera, slc_semestre : semestre, slc_asignatura : asignatura}, function (respuesta) {
 						$('#detalles').html(respuesta);
 					});
 					
