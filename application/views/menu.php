@@ -105,13 +105,9 @@
 											'<a href=' . base_url() . 'index.php/reportes/inscripcion>Inscripcion</a>',
 											),
 				'Periodos' => array(
-											
 											'<a href=' . base_url() . 'index.php/periodos/asignaturas>Asignaturas</a>',
 											'<a href=' . base_url() . 'index.php/periodos/evaluaciones>Evaluaciones</a>',
-//											'<a href=' . base_url() . 'index.php/periodos/crear>Crear</a>',
 											'<a href=' . base_url() . 'index.php/periodos/periodos>Periodos</a>',	
-//											'<a href=' . base_url() . 'index.php/periodos/crear>Crear nuevo periodo</a>',
-//											'<a href=' . base_url() . 'index.php/periodos/actividades>Actividades</a>',
 											),							
 				'Asignaturas' => array(
 	//										'<a href=' . base_url() . 'asignaturas/reporte>Reporte</a>',
@@ -166,11 +162,8 @@
 											'<a href=' . base_url() . 'index.php/reportes/recuperatorio>Recuperatorio</a>',
 											),
 				'Periodos' => array(
-											'<a href=' . base_url() . 'index.php/periodos/inscripcion_asignatura>Inscripción a asignatura</a>',
-											'<a href=' . base_url() . 'index.php/periodos/inscripcion_evaluacion>Inscripción a evaluación</a>',
-//											'<a href=' . base_url() . 'index.php/periodos/habilitar>Habilitar periodo</a>',	
-//											'<a href=' . base_url() . 'index.php/periodos/crear>Crear nuevo periodo</a>',
-//											'<a href=' . base_url() . 'index.php/periodos/actividades>Actividades</a>',
+											'<a href=' . base_url() . 'index.php/periodos/asignaturas>Asignaturas</a>',
+											'<a href=' . base_url() . 'index.php/periodos/evaluaciones>Evaluaciones</a>',
 											),
 			);
 			
@@ -195,11 +188,8 @@
 											'<a href=' . base_url() . 'index.php/reportes/reporte_cpi>Inscripciones al CPI</a>',
 											),
 				'Periodos' => array(
-											'<a href=' . base_url() . 'index.php/periodos/inscripcion_asignatura>Inscripción a asignatura</a>',
-											'<a href=' . base_url() . 'index.php/periodos/inscripcion_evaluacion>Inscripción a evaluación</a>',
-//											'<a href=' . base_url() . 'index.php/periodos/habilitar>Habilitar periodo</a>',	
-//											'<a href=' . base_url() . 'index.php/periodos/crear>Crear nuevo periodo</a>',
-//											'<a href=' . base_url() . 'index.php/periodos/actividades>Actividades</a>',
+											'<a href=' . base_url() . 'index.php/periodos/asignaturas>Asignaturas</a>',
+											'<a href=' . base_url() . 'index.php/periodos/evaluaciones>Evaluaciones</a>',
 											),
 			);
 			

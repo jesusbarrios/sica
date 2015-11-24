@@ -138,24 +138,24 @@
 		    width: 150px;
 		}
 
-		td{
+		table.cabecera td{
 			vertical-align: top;
 		}
 
-		input[type="submit"] {
+		table.cabecera input[type="submit"] {
 		    cursor: pointer;
 		}
-		.error{
+		table.cabecera .error{
 			color: #000000;
 		    background: none repeat scroll 0 0 #FF9E9E;
 		    border: 1px solid #AA8888;
 		    font-size: 13px;
-		    margin: 2px;
+		    margin: 2px 0px;
 		    padding: 1px;
 		    text-align: left;
 		}
 
-		.ok{
+		table.cabecera .ok{
 			color: #000000;
 		    background: none repeat scroll 0 0 #9EFF9E;
 		    border: 1px solid #88AA88;
@@ -164,7 +164,7 @@
 		    padding: 1px;
 		    text-align: center;
 		}
-		.obligatorio {
+		table.cabecera .obligatorio {
 		    color: #FF0000;
 		    float: left;
 		    font-size: 11px;
@@ -172,11 +172,11 @@
 		    padding: 0 2px;
 		}
 
-		table{
+		table.cabecera{
 			margin: 10px auto;
 		}
 
-		#detalles{
+		table.cabecera #detalles{
 			text-align: center;
 		}
 	</style>
@@ -188,8 +188,12 @@
 		echo form_open('');
 		echo form_fieldset('Habilitación de inscripcion semestral');
 		
-		if($mensaje)	
-			echo "<div class='ok'>" . $mensaje . "</div>";
+		//MENSAJE
+		if($mensaje){
+			$this->table->add_row(array(
+				array('data' => $mensaje, 'colspan' => 2, 'class' => 'ok'),
+			));
+		}
 		
 		/*
 		*PERIODOS
@@ -268,7 +272,7 @@
 		*DOCENTES
 		*
 		*/
-		$txt_docente = array(
+/*		$txt_docente = array(
 			'type'			=> 'input',
 			'name'			=> 'txt_docente',
 			'id'			=> 'txt_docente',
@@ -299,7 +303,7 @@
 		*/
 
 
-		$slc_dia = array('' => '-----', '2' => 'Lunes', '3' => 'Martes', '4' => 'Miercoles', '5' => 'Jueves', '6' => 'Viernes', '7' => 'Sabado', '1' => 'Domingo');
+/*		$slc_dia = array('' => '-----', '2' => 'Lunes', '3' => 'Martes', '4' => 'Miercoles', '5' => 'Jueves', '6' => 'Viernes', '7' => 'Sabado', '1' => 'Domingo');
 		if((set_value('slc_asignatura') == 'todas' || !set_value('slc_asignatura'))){
 			$this->table->add_row(array(
 				form_label('Día:', 'slc_dia'),
@@ -318,7 +322,7 @@
 		*DESDE
 		*/
 
-		$txt_desde = array(
+/*		$txt_desde = array(
 			'type' 		=> 'time',
 			'name'		=> 'txt_desde',
 			'id'		=> 'txt_desde',
@@ -340,7 +344,7 @@
 		*HASTA
 		*/
 
-		$txt_hasta = array(
+/*		$txt_hasta = array(
 			'type' 		=> 'time',
 			'name'		=> 'txt_hasta',
 			'id'		=> 'txt_hasta',
@@ -367,7 +371,6 @@
 			'name'		=> 'txt_cierre',
 			'id'		=> 'txt_cierre',
 			'maxlength'	=> '10',
-			'size'		=> '8',
 			'value'		=> set_value('txt_cierre'),
 		);
 
@@ -395,7 +398,7 @@
 		else
 			$this->table->add_row(array('data' => '', 'colspan' => 2, 'id' => 'detalles', 'style' => 'display:none'));
 */		
-		$this->table->set_template(array ( 'table_open'  => '<table border="0" cellpadding="2" cellspacing="0" class="">' ));
+		$this->table->set_template(array ( 'table_open'  => '<table border="0" cellpadding="2" cellspacing="0" class="cabecera">' ));
 		echo $this->table->generate();
 		echo form_fieldset_close();
 		echo form_close();

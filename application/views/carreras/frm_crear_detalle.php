@@ -48,13 +48,13 @@
 	if($carreras){
 		$contador = 1;
 		foreach($carreras->result() as $row){
-			$cant_semestres = 0;
-			$semestres = $this->m_carreras->get_semestre($row->id_facultad, $row->id_carrera);
-			if($semestres)
-				$cant_semestres = $semestres->num_rows() - 1;
+			$cant_cursos = 0;
+			$cursos = $this->m_carreras->get_cursos($row->id_facultad, $row->id_carrera);
+			if($cursos)
+				$cant_cursos = $cursos->num_rows() - 1;
 
-			$inscripciones  = $this->m_carreras->get_inscripcion_asignatura($row->id_facultad, false, $row->id_carrera);
-			$asignaturas = $this->m_carreras->get_asignatura($row->id_facultad, $row->id_carrera);
+			$inscripciones  = $this->m_inscripciones_curso->get_inscripciones($row->id_facultad, false, $row->id_carrera);
+			$asignaturas = $this->m_asignaturas->get_asignaturas($row->id_facultad, $row->id_carrera);
 			$relacion = $this->m_carreras->get_relacion_sede_carrera($row->id_facultad, $row->id_carrera);
 //$asignaturas = false;
 
@@ -66,11 +66,11 @@
 			$this->table->add_row(array(
 					$contador ++,
 					$row->carrera,
-					array('data' => $cant_semestres, 'style' => 'text-align:center'),
+					array('data' => $cant_cursos, 'style' => 'text-align:center'),
 					($eliminar)? '<span class=eliminar id=' . $row->id_carrera . '>Eliminar</span>' :'En uso',
 				));	
 		}
-		$this->table->set_heading(array('N<sup>ro</sup>', 'Carreras', 'Semestres', 'Opciones'));	
+		$this->table->set_heading(array('N<sup>ro</sup>', 'Carreras', 'Cursos', 'Opciones'));	
 		$this->table->set_template(array('table_open' => '<table cellspacing= "0", border="1" class=lista>'));
 		echo $this->table->generate();	
 		

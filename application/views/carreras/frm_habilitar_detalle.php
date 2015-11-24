@@ -18,7 +18,7 @@
 					var datos = $.parseJSON(respuesta);
 					if(confirm('Seguro que quieres eliminar la relación "' + datos['sede'] + '" - "' + datos['carrera'] + '"')){
 						$.post('<?=base_url()?>index.php/carreras/habilitar/eliminar', {slc_facultad : facultad, slc_sede : sede, slc_carrera : carrera}, function (respuesta) {
-							$('#detalle').html(respuesta)
+							$('#detalles').html(respuesta)
 						});	
 					}
 				});
@@ -35,7 +35,7 @@
 					var datos = $.parseJSON(respuesta);
 					if(confirm('Seguro que quieres desabilitar la relación "' + datos['sede'] + '" - "' + datos['carrera'] + '"')){
 						$.post('<?=base_url()?>index.php/carreras/habilitar/cambiar_estado', {slc_facultad : facultad, slc_sede : sede, slc_carrera : carrera, estado : 0}, function (respuesta) {
-							$('#detalle').html(respuesta)
+							$('#detalles').html(respuesta)
 						});	
 					}
 				});
@@ -52,7 +52,7 @@
 					var datos = $.parseJSON(respuesta);
 					if(confirm('Seguro que quieres habilitar la relación "' + datos['sede'] + '" - "' + datos['carrera'] + '"')){
 						$.post('<?=base_url()?>index.php/carreras/habilitar/cambiar_estado', {slc_facultad : facultad, slc_sede : sede, slc_carrera : carrera, estado : 1}, function (respuesta) {
-							$('#detalle').html(respuesta)
+							$('#detalles').html(respuesta)
 						});	
 					}
 				});
@@ -85,7 +85,7 @@
 	if($relaciones){
 		$contador = 1;
 		foreach($relaciones->result() as $row){
-			$inscripciones = $this->m_carreras->get_inscripcion_asignatura($row->id_facultad, $row->id_sede);
+			$inscripciones = $this->m_inscripciones_curso->get_inscripciones(false, $row->id_facultad, $row->id_sede);
 			$this->table->add_row(array(
 				$contador ++,
 				$row->carrera,
@@ -96,7 +96,7 @@
 		}
 		$this->table->set_heading(array('N<sup>ro</sup>', 'Carreras', 'Fechas de creación', array('data' => 'Opciones', 'colspan' => '2')));	
 		$this->table->set_template(array('table_open' => '<table cellspacing= "0", border="1" class="detalles">'));
-		$this->table->set_caption('Lista de Carreras');
+		$this->table->set_caption('Detalles de carreras habilitadas');
 	}else{
 		$this->table->set_template(array('table_open' => '<table cellspacing= "0", border="0" class="detalles">'));
 		$this->table->add_row('No hay carrera relaciona con la sede');

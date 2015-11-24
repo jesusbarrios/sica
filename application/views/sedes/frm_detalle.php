@@ -88,7 +88,7 @@
 		$cont = 0;
 		foreach($sedes->result() as $row){
 			$cont ++;
-			$relaciones_sede_carrera = $this->sedes->get_ralacion_sede_carrera($row->id_sede);
+			$relaciones_sede_carrera = $this->m_carreras->get_relacion_sede_carrera($row->id_sede);
 			$this->table->add_row(array(
 				$cont,
 				$row->sede,

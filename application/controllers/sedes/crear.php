@@ -8,7 +8,8 @@ class Crear extends CI_Controller {
 
 		parent::__construct();
 		$this->load->library('form_validation');
-		$this->load->model('m_sedes', 'sedes', TRUE);
+		$this->load->model('m_carreras', '', TRUE);
+		$this->load->model('m_sedes', '', TRUE);
 		
 		if(!$this->session->userdata('logged_in'))
 			redirect('', 'refresh');
@@ -33,12 +34,12 @@ class Crear extends CI_Controller {
 */
 			$estado = '1';
 			$sede = $this->input->post('txt_sede');
-			$this->sedes->guardar($sede, $estado);
+			$this->m_sedes->guardar($sede, $estado);
 			$mensaje = 'Se cargo exitosamente';
 		}else{
 			$mensaje = false;
 		}
-		$sedes = $this->sedes->get_sede();
+		$sedes = $this->m_sedes->get_sedes();
 		$datos = array(
 			'sedes' 	=> $sedes,
 			'msn'		=> false,
@@ -54,7 +55,7 @@ class Crear extends CI_Controller {
 	function actualizar_detalle($retorna = false){
 /*		$session_data = $this->session->userdata('logged_in');
 		$id_facultad = $session_data["id_facultad"];
-*/		$sedes = $this->sedes->get_sede();
+*/		$sedes = $this->m_sedes->get_sedes();
 		$datos = array(
 			'sedes' => $sedes,
 			'msn' => $msn,
@@ -66,14 +67,14 @@ class Crear extends CI_Controller {
 	}
 	
 	function validar($sede){
-		if($this->sedes->get_sede(false, $sede))
+		if($this->m_sedes->get_sedes(false, $sede))
 			return false;
 		return true;
 	}
 	
 	function obtener_nombre(){
 		$id_sede = $this->input->post('slc_sede');
-		$sedes = $this->sedes->get_sede($id_sede);
+		$sedes = $this->m_sedes->get_sedes($id_sede);
 		
 		if($sedes){
 			$sedes_ = $sedes->row_array();
@@ -85,15 +86,15 @@ class Crear extends CI_Controller {
 	
 	function eliminar(){
 		$id = $this->input->post('id_sede');
-		$sedes = $this->sedes->get_sede($id);
+		$sedes = $this->m_sedes->get_sedes($id);
 		if($sedes){
 			$sedes_ = $sedes->row_array();
 			$sede 	=  $sedes_['sede'];
 		}else{
 			echo '';
 		}
-		$this->sedes->eliminar($id);
-		$sedes = $this->sedes->get_sede();
+		$this->m_sedes->eliminar($id);
+		$sedes = $this->m_sedes->get_sedes();
 		$datos = array(
 			'sedes' 	=> $sedes,
 			'msn'		=> $sede . ' se elimino exitosamente',

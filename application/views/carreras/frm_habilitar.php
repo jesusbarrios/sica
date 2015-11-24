@@ -31,7 +31,7 @@
 				else
 					facultad = false;
 				$.post('<?=base_url()?>index.php/carreras/habilitar/actualizar_detalle', {slc_facultad : facultad, slc_sede : sede}, function (respuesta) {
-					$('#detalle').html(respuesta).show();
+					$('#detalles').html(respuesta).show();
 				});
 			}).focus();	
 			
@@ -41,11 +41,9 @@
 				$.post('<?=base_url()?>index.php/carreras/habilitar/actualizar_slc_carrera', {slc_facultad : facultad}, function (respuesta) {
 					$('#slc_carrera').html(respuesta);
 				});
-				if(sede && facultad){
-					$.post('<?=base_url()?>index.php/carreras/habilitar/actualizar_detalle', {slc_facultad : facultad, slc_sede : sede}, function (respuesta) {
-						$('#detalle').html(respuesta).show();
-					});
-				}
+				$.post('<?=base_url()?>index.php/carreras/habilitar/actualizar_detalle', {slc_facultad : facultad, slc_sede : sede}, function (respuesta) {
+					$('#detalles').html(respuesta).show();
+				});
 			});	
 			
 			$('#slc_carrera').change(function() { 
@@ -140,7 +138,7 @@
 
 		if($sedes){
 			if($sedes->num_rows() > 1)
-				$opcionnes = array(null => '-----');
+				$opcionnes = array('' => '-----');
 			foreach($sedes->result() as $row)
 				$opcionnes[$row->id_sede] = $row->sede;
 		
@@ -150,7 +148,7 @@
 				form_error('slc_sede', '<div class="error">', '</div>')
 			));
 		}else{
-			$opcionnes = array(null => '-----');
+			$opcionnes = array('' => '-----');
 		}
 		
 		/*
@@ -160,11 +158,11 @@
 		*/
 		if($facultades){
 			if($facultades->num_rows() > 1)
-				$opcionnes = array(null => '-----');
+				$opcionnes = array('' => '-----');
 			foreach($facultades->result() as $row)	
 				$opcionnes[$row->id_facultad] = $row->facultad;
 		}else
-			$opcionnes = array(null => '-----');
+			$opcionnes = array('' => '-----');
 
 		$this->table->add_row(array(
 			form_label('Facultad:'),
@@ -179,12 +177,12 @@
 		*/
 		if($carreras){
 			if($carreras->num_rows() > 1)
-				$opcionnes = array(null => '-----');
+				$opcionnes = array('' => '-----');
 			foreach($carreras->result() as $row){	
 				$opcionnes[$row->id_carrera] = $row->carrera;
 			}
 		}else
-			$opcionnes = array(null => '-----');
+			$opcionnes = array('' => '-----');
 
 		$this->table->add_row(array(
 			form_label('Carreras:'),
@@ -205,12 +203,15 @@
 			form_input($btn_guardar)
 		));
 
+		$this->table->add_row(array(
+			array('data' => $detalles, 'colspan' => '2', 'id' => 'detalles'),
+		));
+
 		$this->table->set_template(array('table_open' => '<table cellspacing= "3", border="0" class="frm">'));
 		$this->table->set_caption('');
 		echo $this->table->generate();		
 		echo form_fieldset_close();
 		echo form_close();
-		echo "<div id=detalle></div>";
 
 	?>
 </body>

@@ -8,7 +8,7 @@ class Crear extends CI_Controller {
 
 		parent::__construct();
 
-		$this->load->model('m_facultad', '', TRUE);
+		$this->load->model('m_facultades', '', TRUE);
 		$this->load->model('m_carreras', '', TRUE);
 		if(!$this->session->userdata('logged_in'))
 			redirect('', 'refresh');			
@@ -30,12 +30,12 @@ class Crear extends CI_Controller {
 		if ($this->form_validation->run()){			
 			$facultad 	= $this->input->post('txt_facultad');
 			$creacion 	= $this->input->post('txt_creacion');
-			$this->m_facultad->guardar($facultad, $creacion);
+			$this->m_facultades->guardar($facultad, $creacion);
 			$msn = 'La facultad se agrego exitosamente';
 		}else{
 			$msn = false;
 		}
-		$facultades = $this->m_facultad->get_facultad();
+		$facultades = $this->m_facultades->get_facultades();
 		$datos = array(
 			'facultades'=> $facultades,
 			'msn'		=> false,
@@ -49,7 +49,7 @@ class Crear extends CI_Controller {
 	}
 	
 	function validar($facultad){
-		if($this->m_facultad->get_facultad(false, $facultad))
+		if($this->m_facultades->get_facultades(false, $facultad))
 			return false;
 		return true;
 	}	
@@ -60,7 +60,7 @@ class Crear extends CI_Controller {
 
 	function obtener_nombre(){
 		$id_facultad = $this->input->post('id');
-		$facultades = $this->m_facultad->get_facultad($id_facultad);
+		$facultades = $this->m_facultades->get_facultades($id_facultad);
 		if($facultades){
 			$facultades_ = $facultades->row_array();
 			echo $facultades_['facultad'];
@@ -69,8 +69,8 @@ class Crear extends CI_Controller {
 
 	function eliminar(){
 		$id_facultad = $this->input->post('id');
-		$this->m_facultad->eliminar($id_facultad);
-		$facultades = $this->m_facultad->get_facultad();
+		$this->m_facultades->eliminar($id_facultad);
+		$facultades = $this->m_facultades->get_facultades();
 		$datos = array(
 			'facultades'=> $facultades,
 			'msn'		=> 'La facultad se elimino exitosamente',

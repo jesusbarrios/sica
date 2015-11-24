@@ -1,6 +1,6 @@
 <?php
 class M_sedes extends CI_Model{
-	function get_sede($id_sede = false, $sede = false){
+	function get_sedes($id_sede = false, $sede = false){
 		if($id_sede)
 			$this->db->where('id_sede', $id_sede);
 		if($sede)
@@ -38,7 +38,7 @@ class M_sedes extends CI_Model{
 		
 		return false;
 	}
-
+/*
 	function get_ralacion_sede_carrera($id_facultad = false, $id_sede = false){
 		
 		if($id_facultad)
@@ -52,5 +52,6 @@ class M_sedes extends CI_Model{
 			return $result;
 		return false;
 	}
+*/
 }
 ?>

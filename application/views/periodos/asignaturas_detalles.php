@@ -68,7 +68,7 @@
 	<link rel="stylesheet" href="<?=base_url()?>css/frm_login.css" type="text/css" />
 
 	<style>
-		span.deshabilitar, span.habilitar, span.eliminar{
+		table.detalles span{
 			cursor: pointer;
 		}
 		table.detalles td{
@@ -109,11 +109,10 @@
 				$this->table->set_heading('Facultades', 'Sedes', 'Roles', array('data' => 'Opciones', 'colspan' => 2));
 			else
 				$this->table->set_heading('Facultad', 'Sede', 'Rol', array('data' => 'Opciones', 'colspan' => 2));
-			$this->table->set_template(array ( 'table_open'  => '<table border="1" cellpadding="2" cellspacing="0" class="">' ));
 		}else{
 			$this->table->add_row(array('No hay usuario relacionado con la persona.'));
 		}
-
+		$this->table->set_template(array ( 'table_open'  => '<table border="1" cellpadding="2" cellspacing="0" class="detalles">' ));
 		echo $this->table->generate();
 		
 	?>

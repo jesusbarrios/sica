@@ -1,6 +1,6 @@
 <?php
 
-class M_facultad extends CI_Model{
+class M_facultades extends CI_Model{
 
 	function get_facultades($id_facultad = false, $facultad = false){
 		if($id_facultad)

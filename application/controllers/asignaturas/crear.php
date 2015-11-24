@@ -8,9 +8,9 @@ class Crear extends CI_Controller {
 
 		parent::__construct();
 
-		$this->load->model('m_carreras', 'carreras', TRUE);
-		$this->load->model('m_sedes', 'sedes', TRUE);
-		$this->load->model('m_asignaturas', 'asignaturas', TRUE);
+		$this->load->model('m_carreras', '', TRUE);
+		$this->load->model('m_sedes', '', TRUE);
+		$this->load->model('m_asignaturas', '', TRUE);
 
 		if(!$this->session->userdata('logged_in')){
 			redirect('', 'refresh');			
@@ -30,8 +30,8 @@ class Crear extends CI_Controller {
 		$this->form_validation->set_message('max_length', 'Debe contener un máximo de 100 caracteres');
 		$this->form_validation->set_message('es_unico', 'Esta asignatura ya existe');
 
-		$carrera = $this->input->post('slc_carrera');
-		$semestre = $this->input->post('slc_semestre'); 
+		$id_carrera = $this->input->post('slc_carrera');
+		$id_curso = $this->input->post('slc_curso'); 
 
 		$session_data = $this->session->userdata('logged_in');
 		$id_facultad = $session_data["id_facultad"];
@@ -39,26 +39,25 @@ class Crear extends CI_Controller {
 		$frm_msn = $frm_msn_class = false;
 
 		if ($this->form_validation->run()){
-			$id =  $this->asignaturas->get_id_max($id_facultad, $carrera, $semestre) + 1;
+			$id =  $this->m_asignaturas->get_id_max($id_facultad, $carrera, $curso) + 1;
 			$asignatura = $this->input->post('txt_asignatura');
 			$estado = '1';
 
-			$this->asignaturas->guardar($id_facultad, $carrera, $semestre, $id, $asignatura, $estado);
+			$this->m_asignaturas->guardar($id_facultad, $carrera, $curso, $id, $asignatura, $estado);
 
 		}
-		if($semestre >= 0){
+		if($id_curso)
 			$detalle = $this->actualizar_detalle(true); //Parametro: retorno = true;
-//			echo 'uno';
-		}else
+		else
 			$detalle = false;
 					
-		$carreras = $this->carreras->get_carrera($id_facultad);
+		$carreras = $this->m_carreras->get_carreras($id_facultad);
 
-		$semestres = ($carrera)? $this->carreras->get_semestre($id_facultad, $carrera) : false;
+		$cursos = ($id_carrera)? $this->m_carreras->get_cursos($id_facultad, $id_carrera) : false;
 
 		$datos = array(
 			'carreras' => $carreras,
-			'semestres' => $semestres,
+			'cursos' => $cursos,
 			'detalle' => $detalle
 		);
 
@@ -83,7 +82,7 @@ class Crear extends CI_Controller {
 		$carrera = $this->input->post('slc_carrera');
 		$semestre = $this->input->post('slc_semestre');
 		
-		$asignaturas = $this->asignaturas->get_asignatura($id_facultad, $carrera, $semestre);
+		$asignaturas = $this->m_asignaturas->get_asignaturas($id_facultad, $carrera, $semestre);
 		
 		$datos = array(
 			'asignaturas' => $asignaturas,
@@ -102,7 +101,7 @@ class Crear extends CI_Controller {
 
 		$carrera = $this->input->post('slc_carrera');
 
-		$semestres = $this->carreras->get_semestre($id_facultad, $carrera);
+		$semestres = $this->m_carreras->get_semestre($id_facultad, $carrera);
 
 		$opciones = "<option value=null>-----</option>";
 
@@ -121,8 +120,8 @@ class Crear extends CI_Controller {
 		$semestre = $this->input->post('slc_semestre');
 		$asignatura = $this->input->post('asignatura');
 		
-		$asignaturas = $this->asignaturas->get_asignatura($id_facultad, $carrera, $semestre, $asignatura);		
-		$this->asignaturas->eliminar($id_facultad, $carrera, $semestre, $asignatura);
+		$asignaturas = $this->m_asignaturas->get_asignatura($id_facultad, $carrera, $semestre, $asignatura);		
+		$this->m_asignaturas->eliminar($id_facultad, $carrera, $semestre, $asignatura);
 		
 		foreach($asignaturas->result() as $row)
 			$nombre_asignatura = $row->asignatura;
@@ -139,7 +138,7 @@ class Crear extends CI_Controller {
 		$semestre = $this->input->post('slc_semestre');
 		$asignatura = $this->input->post('asignatura');
 
-		$asignatura = $this->asignaturas->get_asignatura($id_facultad, $carrera, $semestre, $asignatura);
+		$asignatura = $this->m_asignaturas->get_asignatura($id_facultad, $carrera, $semestre, $asignatura);
 		foreach($asignatura->result() as $row)
 			echo $row->asignatura;
 	}

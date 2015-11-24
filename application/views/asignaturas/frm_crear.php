@@ -25,20 +25,20 @@
 
 			$('#slc_carrera').change(function() { 
 				carrera = $(this).val();
-				$('#slc_semestre option[value=]').prop('selected', true);
+				$('#slc_curso option[value=]').prop('selected', true);
 				
 				$('#detalle').hide('fast');
 				$('#txt_asignatura').val('').attr('readonly', true);
 				$('#btn_guardar').attr('disabled', true);
 
-				$.post('<?=base_url()?>index.php/asignaturas/crear/actualizar_slc_semestre', {slc_carrera : carrera}, function (respuesta) {
+				$.post('<?=base_url()?>index.php/asignaturas/crear/actualizar_slc_curso', {slc_carrera : carrera}, function (respuesta) {
 					alert('uno');
-					$("#slc_semestre").html(respuesta);
+					$("#slc_curso").html(respuesta);
 				});
 			});
 
-			$('#slc_semestre').change(function(args) {
-				carrera = $('#slc_carrera').val();
+			$('#slc_curso').change(function(args) {
+				carrera = $('#slc_curso').val();
 				semestre = $(this).val();
 				$('#txt_asignatura').val('');
 				
@@ -149,18 +149,18 @@
 			form_error('slc_carrera', '<div class=error>', '</div>')
 		));
 
-		//CAMPO SEMESTRES
+		//CAMPO CURSO
 		$opciones = array(null => '-----');
-		if($semestres){
-			foreach($semestres->result()  as $row){
-				$opciones[$row->id_semestre] = $row->semestre;
+		if($cursos){
+			foreach($cursos->result()  as $row){
+				$opciones[$row->id_curso] = $row->curso;
 			}
 		}
 
 		$this->table->add_row(array(
-			form_label('Semestre:'),
-			form_dropdown('slc_semestre', $opciones, set_value('slc_semestre'), 'id = slc_semestre') .
-			form_error('slc_semestre', '<div class=error>', '</div>')
+			form_label('Curso:'),
+			form_dropdown('slc_curso', $opciones, set_value('slc_curso'), 'id = slc_curso') .
+			form_error('slc_curso', '<div class=error>', '</div>')
 		));
 
 		//CAMPO ASIGNATURA

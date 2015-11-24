@@ -8,7 +8,10 @@ class Habilitar extends CI_Controller {
 
 		parent::__construct();
 
+		$this->load->model('m_facultades', '', TRUE);
+		$this->load->model('m_sedes', '', TRUE);
 		$this->load->model('m_carreras', '', TRUE);
+		$this->load->model('m_inscripciones_curso', '', TRUE);
 
 		if(!$this->session->userdata('logged_in')){
 
@@ -47,14 +50,12 @@ class Habilitar extends CI_Controller {
 		$this->form_validation->set_message('required', 'El campo es obligatorio');
 		$this->form_validation->set_message('validar', 'Esta relacion ya existe');
 		$this->form_validation->set_message('validar_fecha', 'La fecha es invalida, respetar el formato YYYY-mm-dd');
-		$mensaje 		= false;
-		$id_facultad 	= false;
 		
 		if($session_data = $this->session->userdata('logged_in')){
 			if($session_data["id_facultad"] == 1){
 				$this->form_validation->set_rules('slc_facultad', 'Facultad', 'required');
 				$id_facultad = $this->input->post('slc_facultad');
-			}else{
+			}else {
 				$id_facultad = $session_data["id_facultad"];
 			}
 		}
@@ -69,10 +70,10 @@ class Habilitar extends CI_Controller {
 			$msn = false;
 		}
 
-		$sedes 	= $this->m_carreras->get_sede();
+		$sedes 	= $this->m_sedes->get_sedes();
 		if($session_data = $this->session->userdata('logged_in')){
 			if($session_data["id_facultad"] == 1){
-				$facultades = $this->m_carreras->get_facultad();
+				$facultades = $this->m_facultades->get_facultades();
 				if($facultades && $facultades->row_array() == 1 && !$id_facultad){
 					$facultades_ = $facultades->row_array();
 					$id_facultad = $facultades_['id_facultad'];
@@ -84,9 +85,9 @@ class Habilitar extends CI_Controller {
 			$sedes_ 	= $sedes->row_array();
 			$id_sede 	= $sedes_['id_sede'];
 		}
-		
+
 		if($id_facultad){
-			$carreras = $this->m_carreras->get_carrera($id_facultad, false);
+			$carreras = $this->m_carreras->get_carreras($id_facultad, false);
 			if($id_sede)
 				$relaciones = $this->m_carreras->get_relacion_sede_carrera($id_facultad, $id_sede);
 		}else{
@@ -121,17 +122,19 @@ class Habilitar extends CI_Controller {
 		$id_sede = $this->input->post('slc_sede');
 		$id_carrera = $this->input->post('slc_carrera');
 		
-		$sedes = $this->m_carreras->get_sede($id_sede);
+		$sedes = $this->m_sedes->get_sedes($id_sede);
 		$sedes_ = $sedes->row_array();
 		
-		$carreras = $this->m_carreras->get_carrera($id_facultad, $id_carrera);
+		$carreras = $this->m_carreras->get_carreras($id_facultad, $id_carrera);
 		$carreras_ = $carreras->row_array();
 
 		$datos = array(
 			'sede' => $sedes_['sede'],
 			'carrera' => $carreras_['carrera'],
 		);
+
 		echo json_encode($datos);
+
 	}
 	
 	function eliminar(){
@@ -175,16 +178,19 @@ class Habilitar extends CI_Controller {
 
 	
 	function actualizar_slc_carrera(){
-		$id_facultad = $this->input->post('slc_facultad');
-		$carreras = $this->m_carreras->get_carrera($id_facultad);
-		$opciones = '';
-		if($carreras){
-			if($carreras->num_rows() > 1)
-				$opciones .= '<option value"">-----</option>';
-			foreach($carreras->result() as $row)
-				$opciones .= "<option value=$row->id_carrera>$row->carrera</option>";
+		$id_facultad= $this->input->post('slc_facultad');
+		if($id_facultad){
+			$carreras 	= $this->m_carreras->get_carreras($id_facultad);
+			$opciones 	= '';
+			if($carreras){
+				if($carreras->num_rows() > 1)
+					$opciones .= '<option value="">-----</option>';
+				foreach($carreras->result() as $row)
+					$opciones .= "<option value=$row->id_carrera>$row->carrera</option>";
+			}else
+				$opciones .= '<option value="">-----</option>';
 		}else
-			$opciones .= '<option value"">-----</option>';
+			$opciones .= '<option value="">-----</option>';
 		
 		echo $opciones;
 	}
@@ -203,6 +209,10 @@ class Habilitar extends CI_Controller {
 				'relaciones' => $relaciones,
 			);	
 			$this->load->view('carreras/frm_habilitar_detalle', $datos, FALSE);
+		}else{
+			echo '';
 		}
+
+
 	}
 }

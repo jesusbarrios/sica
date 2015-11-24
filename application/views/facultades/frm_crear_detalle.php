@@ -24,13 +24,16 @@
 	</script>
 	
 	<style>
-		.eliminar{
+		table.detalles{
+			margin:10px auto;
+		}
+		table.detalles .eliminar{
 			color: red;
 		}
-		.eliminar:hover{
+		table.detalles .eliminar:hover{
 			cursor : pointer;
 		}
-		table.lista td{
+		table.detalles td{
 			padding: 3px;
 		}
 	</style>
@@ -44,10 +47,9 @@
 		echo "<div id=msn class=ok>$msn</div>";
 
 	if($facultades){
-		$this->load->model('m_facultad', '', TRUE);
 		$contador = 1;
 		foreach($facultades->result() as $row){
-			$carreras = $this->m_carreras->get_carrera($row->id_facultad);
+			$carreras = $this->m_carreras->get_carreras($row->id_facultad);
 			if($carreras){
 				$eliminar = false;
 			}else{
@@ -66,7 +68,7 @@
 		else
 			$this->table->set_heading(array('N<sup>ro</sup>', 'Facultad', 'Fecha de creación', 'Operacion'));	
 			
-		$this->table->set_template(array('table_open' => '<table cellspacing= "0", border="1" class=lista>'));
+		$this->table->set_template(array('table_open' => '<table cellspacing= "0", border="1" class=detalles>'));
 		echo $this->table->generate();	
 		
 	}else{

@@ -118,11 +118,11 @@
 
 		foreach($asignaturas->result() as $row){
 			$eliminar = false;
-			$correlatividades = $this->asignaturas->get_correlatividad($row->id_facultad, $row->id_carrera, $row->id_semestre, $row->id_asignatura);
+			$correlatividades = $this->m_asignaturas->get_correlatividades($row->id_facultad, $row->id_carrera, $row->id_curso, $row->id_asignatura);
 			if($correlatividades)
 				$eliminar = true;
 				
-			$correlatividades = $this->asignaturas->get_correlatividad($row->id_facultad, $row->id_carrera, false, false, $row->id_semestre, $row->id_asignatura);
+			$correlatividades = $this->m_asignaturas->get_correlatividades($row->id_facultad, $row->id_carrera, false, false, $row->id_curso, $row->id_asignatura);
 			if($correlatividades)
 				$eliminar = true;
 				

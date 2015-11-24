@@ -2,7 +2,7 @@
 
 class M_carreras extends CI_Model{
 
-	function get_carrera($id_facultad = false, $id_carrera = false, $carrera = false){
+	function get_carreras($id_facultad = false, $id_carrera = false, $carrera = false){
 		if($id_facultad)
 			$this->db->where('id_facultad', $id_facultad);
 		if($id_carrera)
@@ -83,28 +83,35 @@ class M_carreras extends CI_Model{
 
 		$this->db->insert('carreras', $datos);
 		
-		$semestres = array('CPI', 'Primer', 'Segundo', 'Tercer', 'Cuarto', 'Quinto', 'Sexto', 'Septimo', 'Octavo', 'Noveno', 'Decimo');
+		$cursos = array('CPI', 'Primer', 'Segundo', 'Tercer', 'Cuarto', 'Quinto', 'Sexto', 'Septimo', 'Octavo', 'Noveno', 'Decimo');
 		
 		for($i = 1; $i <= $cantidad_curso + 1; $i++){
 			$datos = array(
 				'id_facultad' => $facultad,
 				'id_carrera' => $id_carrera,
-				'id_semestre' => $i,
-				'semestre' => (isset($semestres[$i - 1]))? $semestres[$i - 1] : $i,
+				'id_curso' => $i,
+				'curso' => (isset($cursos[$i - 1]))? $cursos[$i - 1] : $i,
 			);
 			
-			$this->db->insert('semestres', $datos);	
+			$this->db->insert('cursos', $datos);	
 		}
 	}
 	
-	function get_semestres($id_facultad, $id_carrera){
-		$this->db->where('id_facultad', $id_facultad);
-		$this->db->where('id_carrera', $id_carrera);
-		$result = $this->db->get('semestres');
+	function get_cursos($id_facultad = false, $id_carrera = false, $id_curso = false){
+		if($id_facultad)
+			$this->db->where('id_facultad', $id_facultad);
+		if($id_carrera)
+			$this->db->where('id_carrera', $id_carrera);
+		if($id_curso)
+			$this->db->where('id_curso', $id_curso);
 
-		return $result;
+		$cursos = $this->db->get('cursos');
+
+		if($cursos->result())
+			return $cursos;
+		return false;
 	}
-	
+/*	
 	function get_cantidad_semestre($id_facultad, $id_carrera){
 		$this->db->where('id_facultad', $id_facultad);
 		$this->db->where('id_carrera', $id_carrera);
@@ -112,17 +119,24 @@ class M_carreras extends CI_Model{
 		
 		return $result;
 	}
-	
-	function get_asignatura($id_facultad, $id_carrera){
-		$this->db->where('id_facultad', $id_facultad);
-		$this->db->where('id_carrera', $id_carrera);
-		$result = $this->db->get('asignaturas');
+*/	
+	function get_asignaturas($id_facultad = false, $id_carrera = false, $id_curso = false, $id_asignatura = false){
+		if($id_facultad)
+			$this->db->where('id_facultad', $id_facultad);
+		if($id_carrera)
+			$this->db->where('id_carrera', $id_carrera);
+		if($id_curso)
+			$this->db->where('id_curso', $id_curso);
+		if($id_asignatura)
+			$this->db->where('id_asignatura', $id_asignatura);
+
+		$asignaturas = $this->db->get('asignaturas');
 		
-		if($result->result())
-			return $result;
+		if($asignaturas->result())
+			return $asignaturas;
 		return false;
 	}
-		
+/*		
 	function obtener_nombre($id){		
 		$this->db->where(array('id_carrera' => $id));
 		$result = $this->db->get('carreras');
@@ -133,9 +147,9 @@ class M_carreras extends CI_Model{
 		}
 		echo false;
 	}
-	
+*/	
 	function eliminar($id_facultad, $id_carrera){
-		$this->db->delete('semestres', array('id_facultad' => $id_facultad, 'id_carrera' => $id_carrera));
+		$this->db->delete('cursos', array('id_facultad' => $id_facultad, 'id_carrera' => $id_carrera));
 		$result = $this->db->delete('carreras', array('id_facultad' => $id_facultad, 'id_carrera' => $id_carrera));
 		if($result)
 			return true;
@@ -149,7 +163,8 @@ class M_carreras extends CI_Model{
 		$this->db->where('id_carrera', $id_carrera);
 		$this->db->delete('relacion_sede_carrera');
 	}
-	
+
+/*	
 	function get_inscripcion_asignatura($facultad = false, $sede = false, $carrera = false){
 		$this->db->select('*');
 		if($facultad)
@@ -167,13 +182,13 @@ class M_carreras extends CI_Model{
 			return $result;
 		return false;
 	}
-	
+*/	
 	/*
 	*
 	*SEDES
 	*
 	*/
-	function get_sede($id_sede = false){
+/*	function get_sede($id_sede = false){
 		if($id_sede)
 			$this->db->where('sedes.id_sede', $id_sede);
 		$sedes = $this->db->get('sedes');
@@ -244,7 +259,7 @@ class M_carreras extends CI_Model{
 	*FACULTADES
 	*
 	*/
-	
+/*	
 	function get_facultad(){
 		$facultades = $this->db->get('facultades');
 		if($facultades->result())
@@ -256,6 +271,7 @@ class M_carreras extends CI_Model{
 	*CREACION
 	*
 	*/
+/*
 	function get_creacion($facultad = false, $sede = false, $carrera = false){
 		if($facultad && $sede && $carrera){
 			$this->db->where('id_facultad', $facultad);
@@ -291,5 +307,6 @@ class M_carreras extends CI_Model{
 		}
 		return false;
 	}
+*/
 }
 ?>

@@ -22,25 +22,19 @@ class Asignaturas extends CI_Controller {
 		$this->load->view('header', FALSE);
 		$this->load->view('menu', FALSE);
 
-		$id_periodo 	= $this->input->post('slc_periodo');
-        $id_sede 		= $this->input->post('slc_sede');
-        $id_carrera 	= $this->input->post('slc_carrera');
-        $id_semestre 	= $this->input->post('slc_semestre');
-        $id_asignatura 	= $this->input->post('slc_asignatura');
-
 //		$this->form_validation->set_rules('txt_usuario', '<b>usuario</b>', 'required|callback_validar_persona');
-		$this->form_validation->set_rules('slc_periodo', '<b>periodo</b>', 'required');
+		$this->form_validation->set_rules('slc_periodo', '<b>periodo</b>', 'required|callback_validar_periodo');
 		$this->form_validation->set_rules('slc_carrera', '<b>carrera</b>', 'required');
 		$this->form_validation->set_rules('slc_semestre', '<b>semestre</b>', 'required');
 		$this->form_validation->set_rules('slc_asignatura', '<b>asignatura</b>', 'required');
-		if($id_asignatura && $id_asignatura != 'todas'){
+/*		if($id_asignatura && $id_asignatura != 'all'){
 			$this->form_validation->set_rules('txt_persona', '<b>persona</b>', 'required');
 			$this->form_validation->set_rules('slc_dia', '<b>dia</b>', 'required');
 			$this->form_validation->set_rules('slc_sala', '<b>sala</b>', 'required');
 			$this->form_validation->set_rules('txt_desde', '<b>desde</b>', 'required');
 			$this->form_validation->set_rules('txt_hasta', '<b>hasta</b>', 'required');
 		}
-
+*/
 		$this->form_validation->set_rules('txt_cierre', '<b>cierre</b>', 'required');
 
 		$slc_periodo 	= $this->cargar_slc_periodo(true);
@@ -50,33 +44,53 @@ class Asignaturas extends CI_Controller {
 			$this->form_validation->set_rules('slc_sede', '<b>sede</b>', 'required');
 			$id_facultad 	= $this->input->post('slc_facultad');
 			$slc_facultad	= $this->cargar_slc_facultad(true);
+			$id_sede 		= $this->input->post('slc_sede');
 			$slc_sede		= $this->cargar_slc_sede($id_facultad, true);
 		}else if($session_data["id_rol"] == 3){
 			$this->form_validation->set_rules('slc_sede', '<b>sede</b>', 'required');
 			$id_facultad 	= $session_data['id_facultad'];
 			$slc_facultad 	= false;
+			$id_sede 		= $this->input->post('slc_sede');
 			$slc_sede	= $this->cargar_slc_sede($id_facultad, true);
-		}else{
+		}else if($session_data["id_rol"] == 2){
 			$id_facultad 	= $session_data['id_facultad'];
 			$id_sede 		= $session_data['id_sede'];
 			$slc_facultad 	= false;
 			$slc_sede 		= false;
 		}
 
+		$id_periodo 	= $this->input->post('slc_periodo');
+	    $id_carrera 	= $this->input->post('slc_carrera');
+	    $id_semestre 	= $this->input->post('slc_semestre');
+	    $id_asignatura 	= $this->input->post('slc_asignatura');
+	    $cierre 		= $this->input->post('txt_cierre');
+
 		$slc_carrera 		= $this->cargar_slc_carrera($id_facultad, $id_sede, true);
 		$slc_semestre 		= $this->cargar_slc_semestre($id_facultad, $id_carrera, true);
 		$slc_asignatura 	= $this->cargar_slc_asignatura($id_facultad, $id_carrera, $id_semestre, true);
-		
 
         $this->form_validation->set_message('required', 'Campo %s es obligatorio');
         $this->form_validation->set_message('validar_persona', 'La personas no esta registrada');
         $this->form_validation->set_message('validar_usuario', 'Esta persona ya tiene este rol');
 
-        
-
-        //Guarda usuario
+        //Guarda
 		if($this->form_validation->run()){
-			$this->user->save_usuarios($id_facultad, $id_sede, $id_persona, $id_rol);
+
+			if($sedes == 'all'){
+				$sedes 	=	$this->m_carreras->get_relacion_sede_carrera($id_facultad, false, false, false, true);
+				if($sedes){
+					foreach ($sedes->result() as $row) {
+						$carreras 	=	$this->m_carreras->get_relacion_sede_carrera($id_facultad, $row->id_sede, false, false, true);
+						if($carreras){
+
+						} 
+					}
+				}
+
+			}else{
+
+			}
+
 			$mensaje 	= "Asignacion de rol exitosa!";
 		}else{
 			$mensaje = false;
@@ -102,6 +116,13 @@ class Asignaturas extends CI_Controller {
 		);
 		$this->load->view('periodos/asignaturas_cabecera', $datos, FALSE);
 
+	}
+
+	function validar_periodo($periodo){
+		$periodos 	= $this->m_periodo->get_periodos(false, true);
+		if($periodos)
+			return true;
+		return false;
 	}
 
 	function validar_persona($usuario){
@@ -180,7 +201,7 @@ class Asignaturas extends CI_Controller {
 		if($retornar){
 			$slc_sede = array('' => '-----');
 			if($id_facultad){
-				$slc_sede['todas'] = 'Todas';
+				$slc_sede['all'] = 'Todas';
 				$sedes 			= $this->m_carreras->get_relacion_sede_carrera($id_facultad);
 				if($sedes)
 					foreach($sedes->result() as $row)
@@ -191,7 +212,7 @@ class Asignaturas extends CI_Controller {
 			$slc_sede = "<option value=>-----</option>";
 			if($id_facultad){
 				$sedes 			= $this->m_carreras->get_relacion_sede_carrera($id_facultad);
-				$slc_sede .= "<option value=todas>Todas</option>";
+				$slc_sede .= "<option value=all>Todas</option>";
 				if($sedes)
 					foreach($sedes->result() as $row)
 						$slc_sede .= "<option value=$row->id_sede >$row->sede </option>";
@@ -222,7 +243,7 @@ class Asignaturas extends CI_Controller {
 			$slc_carrera = array('' => '-----');
 
 			if($id_facultad && $id_sede){
-				$slc_carrera['todas'] = 'Todas';
+				$slc_carrera['all'] = 'Todas';
 
 				$carreras		= $this->m_carreras->get_relacion_sede_carrera($id_facultad, $id_sede);
 				if($carreras)
@@ -234,7 +255,7 @@ class Asignaturas extends CI_Controller {
 			$slc_carrera = "<option value=''>-----</option>";
 
 			if($id_facultad && $id_sede){
-				$slc_carrera .= "<option value=todas>Todas</option>";
+				$slc_carrera .= "<option value=all>Todas</option>";
 				$carreras		= $this->m_carreras->get_relacion_sede_carrera($id_facultad, $id_sede);
 				if($carreras)
 					foreach($carreras->result() as $row)
@@ -264,7 +285,7 @@ class Asignaturas extends CI_Controller {
 		if($retornar){
 			$slc_semestre = array('' => '-----');
 			if($id_facultad && $id_carrera){
-				$slc_semestre['todos'] = 'Todos';
+				$slc_semestre['all'] = 'Todos';
 				$semestres		= $this->m_carreras->get_semestres($id_facultad, $id_carrera);
 				if($semestres)
 					foreach($semestres->result() as $row)
@@ -274,7 +295,7 @@ class Asignaturas extends CI_Controller {
 		}else{
 			$slc_semestre = "<option value=>-----</option>";
 			if($id_facultad && $id_carrera){
-				$slc_semestre .= "<option value=todos>Todos</option>";
+				$slc_semestre .= "<option value=all>Todos</option>";
 				$semestres		= $this->m_carreras->get_semestres($id_facultad, $id_carrera);
 				if($semestres)
 					foreach($semestres->result() as $row)
@@ -311,7 +332,7 @@ class Asignaturas extends CI_Controller {
 		if($retornar){
 			$slc_asignatura = array('' => '-----');
 			if($id_facultad && $id_carrera && $id_semestre){
-				$slc_asignatura['todas'] = 'Todas';
+				$slc_asignatura['all'] = 'Todas';
 				$asignaturas	= $this->m_asignaturas->get_asignaturas($id_facultad, $id_carrera, $id_semestre);
 				if($asignaturas)
 					foreach($asignaturas->result() as $row)
@@ -322,7 +343,7 @@ class Asignaturas extends CI_Controller {
 			$slc_asignatura = "<option value=>-----</option>";
 
 			if($id_facultad && $id_carrera && $id_semestre){
-				$slc_asignatura .= "<option value=todas>Todas</option>";
+				$slc_asignatura .= "<option value=all>Todas</option>";
 				$asignaturas	= $this->m_asignaturas->get_asignaturas($id_facultad, $id_carrera, $id_semestre);
 				if($asignaturas)
 					foreach($asignaturas->result() as $row)

@@ -1,13 +1,13 @@
 <?php
 
-class M_inscripcion extends CI_Model{
+class M_inscripciones_curso extends CI_Model{
 
 	/*
 	*INSCRIPCIONES
 	*
 	*/
 
-	function get_inscripciones($periodo = false, $facultad = false, $sede = false, $carrera = false, $semestre = false, $asignatura = false){
+	function get_inscripciones($periodo = false, $facultad = false, $sede = false, $carrera = false, $curso = false, $asignatura = false){
 		
 		$this->db->select('*');
 		if(!$periodo)
@@ -22,8 +22,8 @@ class M_inscripcion extends CI_Model{
 		if($carrera)
 			$this->db->where('t1.id_carrera', $carrera);
 
-		if($semestre)
-			$this->db->where('t1.id_semestre', $semestre);
+		if($curso)
+			$this->db->where('t1.id_curso', $curso);
 		
 		if($asignatura)
 			$this->db->where('t1.id_asignatura', $asignatura);
@@ -41,18 +41,18 @@ class M_inscripcion extends CI_Model{
 			$this->db->group_by('t1.id_carrera');
 			$this->db->order_by('t1.id_carrera', 'desc');
 		}else if($periodo && $facultad && $sede && $carrera && !$semestre){
-			$this->db->group_by('t4.id_semestre');
-			$this->db->order_by('t4.id_semestre', 'asc');
+			$this->db->group_by('t4.id_curso');
+			$this->db->order_by('t4.id_curso', 'asc');
 		}else if($periodo && $facultad && $sede && $carrera && $semestre && !$asignatura){
 			$this->db->group_by('t1.id_asignatura');
-			$this->db->order_by('t4.id_semestre', 'asc');
+			$this->db->order_by('t4.id_curso', 'asc');
 		}
 
 		$this->db->join('facultades', 'facultades.id_facultad = t1.id_facultad');
 		$this->db->join('sedes', 'sedes.id_sede = t1.id_sede');
 		$this->db->join('carreras', 'carreras.id_facultad = t1.id_facultad AND carreras.id_carrera = t1.id_carrera');
-		$this->db->join('semestres as t4', 't4.id_facultad = t1.id_facultad AND t4.id_carrera = t1.id_carrera AND t4.id_semestre = t1.id_semestre');
-		$this->db->join('asignaturas as t5', 't5.id_facultad = t1.id_facultad AND t5.id_carrera = t1.id_carrera AND t5.id_semestre = t1.id_semestre AND t5.id_asignatura = t1.id_asignatura');
+		$this->db->join('cursos as t4', 't4.id_facultad = t1.id_facultad AND t4.id_carrera = t1.id_carrera AND t4.id_curso = t1.id_curso');
+		$this->db->join('asignaturas as t5', 't5.id_facultad = t1.id_facultad AND t5.id_carrera = t1.id_carrera AND t5.id_curso = t1.id_curso AND t5.id_asignatura = t1.id_asignatura');
 
 		$inscripciones = $this->db->get('inscripciones as t1');
 
@@ -354,7 +354,6 @@ class M_inscripcion extends CI_Model{
 		if($carreras->result())
 			return $carreras;
 		return false;
-
 	}
 	
 	/*
@@ -363,7 +362,6 @@ class M_inscripcion extends CI_Model{
 	*Utilizados en los controles(reporte_cpi)
 	*/
 	function get_periodo($id_facultad = false, $id_sede = false, $id_carrera = false, $id_semestre = false, $id_periodo = false){
-
 		if($id_facultad)
 			$this->db->where('t1.id_facultad', $id_facultad);
 
@@ -383,7 +381,6 @@ class M_inscripcion extends CI_Model{
 		if($periodos->result())
 			return $periodos;
 		return false;
-
 	}
 	/**/
 }

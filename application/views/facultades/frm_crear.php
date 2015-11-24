@@ -20,13 +20,8 @@
 		    	$('#msn').hide('slow');
 			});
 			
-			$('#btn_cancelar').click(function() {				
-				$('#txt_carrera')
-				.val('')
-				.focus();
-				$('#msn').hide();
-				
-				$('#txt_cursos').val('');
+			$('#btn_cancelar').click(function() {
+					window.location.replace('<?=base_url()?>index.php/facultades/crear');
 			});
 		});
 	</script>
@@ -71,7 +66,7 @@
 		    background: none repeat scroll 0 0 #FF9E9E;
 		    border: 1px solid #AA8888;
 		    font-size: 12px;
-		    margin: 2px;
+		    margin: 2px 0px;
 		    padding: 1px 3px;
 		    text-align: left;
 		}
@@ -92,8 +87,13 @@
 		    padding: 0 2px;
 		}
 		
-		table{
+		table.cabecera{
 			margin: 10px auto;
+		}
+
+		table.cabecera td{
+			padding: 3px;
+			vertical-align: top;
 		}
 	</style>
 	
@@ -164,7 +164,7 @@
 			array('data' => $detalle, 'colspan' => '2', 'id' => 'detalle'),
 		));	
 		
-		$this->table->set_template(array('table_open' => '<table cellspacing= "0", border="0">'));
+		$this->table->set_template(array('table_open' => '<table cellspacing= "0", border="0", class="cabecera">'));
 		echo $this->table->generate();		
 		echo form_fieldset_close();
 		echo form_close();

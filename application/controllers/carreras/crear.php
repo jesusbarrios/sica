@@ -8,7 +8,10 @@ class Crear extends CI_Controller {
 
 		parent::__construct();
 
+		$this->load->model('m_facultades', '', TRUE);
 		$this->load->model('m_carreras', '', TRUE);
+		$this->load->model('m_asignaturas', '', TRUE);
+		$this->load->model('m_inscripciones_curso', '', TRUE);
 //		$this->load->model('m_inscripcion', '', TRUE);
 
 		if(!$this->session->userdata('logged_in')){
@@ -57,18 +60,18 @@ class Crear extends CI_Controller {
 		
 		if($session_data = $this->session->userdata('logged_in')){
 			if($session_data["id_rol"] == 1){
-				$facultades = $this->m_carreras->get_facultad();
+				$facultades = $this->m_facultades->get_facultades();
 				if($facultades && $facultades->num_rows() == 1){
 					$facultades_ = $facultades->row_array();
-					$carreras = $this->m_carreras->get_carrera($facultades_['id_facultad']);	
+					$carreras = $this->m_carreras->get_carreras($facultades_['id_facultad']);	
 				}else if($facultades && $id_facultad){
-					$carreras = $this->m_carreras->get_carrera($id_facultad);	
+					$carreras = $this->m_carreras->get_carreras($id_facultad);	
 				}else{
 					$carreras = false;
 				}
 			}else{
 				$facultades = false;
-				$carreras = $this->m_carreras->get_carrera($session_data["id_facultad"]);	
+				$carreras = $this->m_carreras->get_carreras($session_data["id_facultad"]);	
 			}
 		}
 		
@@ -92,7 +95,7 @@ class Crear extends CI_Controller {
 		if($session_data = $this->session->userdata('logged_in')){
 			if($session_data["id_rol"] == 1){
 				$id_facultad = $this->input->post('slc_facultad');
-				$carreras = $this->m_carreras->get_carrera($id_facultad, false, $carrera);
+				$carreras = $this->m_carreras->get_carreras($id_facultad, false, $carrera);
 			}else{
 				$carreras = $this->m_carreras->get_carrera($session_data["id_facultad"], false, $carrera);
 			}
@@ -104,7 +107,7 @@ class Crear extends CI_Controller {
 	
 	function actualizar_detalle($retorno = false){
 		$id_facultad = $this->input->post('id');
-		$carreras = $this->m_carreras->get_carrera($id_facultad);
+		$carreras = $this->m_carreras->get_carreras($id_facultad);
 		$datos = array(
 			'carreras' => $carreras,
 			'msn' => false,
@@ -121,7 +124,7 @@ class Crear extends CI_Controller {
 			}
 		}
 		$id_carrera = $this->input->post('id');
-		$carreras = $this->m_carreras->get_carrera($id_facultad, $id_carrera);
+		$carreras = $this->m_carreras->get_carreras($id_facultad, $id_carrera);
 		if($carreras){
 			$row = $carreras->row_array();
 			echo $row['carrera'];
@@ -138,7 +141,7 @@ class Crear extends CI_Controller {
 		}
 		$id_carrera = $this->input->post('id');
 		$this->m_carreras->eliminar($id_facultad, $id_carrera);
-		$carreras = $this->m_carreras->get_carrera($id_facultad);
+		$carreras = $this->m_carreras->get_carreras($id_facultad);
 		$datos = array(
 			'carreras' => $carreras,
 			'msn' => 'Se elimino exitosamente',
