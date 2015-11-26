@@ -48,7 +48,7 @@ class M_carreras extends CI_Model{
 
 		return false;
 	}
-	
+/*	
 	function get_id_max(){
 
 		$this->db->select('id_carrera');
@@ -62,9 +62,8 @@ class M_carreras extends CI_Model{
 		
 		return 0;
 	}
-	
-	function guardar($facultad, $carrera, $estado, $cantidad_curso){
-		
+*/	
+	function guardar($id_facultad, $codigo, $carrera, $tipo, $cantidad_curso, $estado){
 		$this->db->select_max('t1.id_carrera');
 		$this->db->where('t1.id_facultad', $facultad);
 		$carreras = $this->db->get('carreras as t1');
@@ -75,10 +74,12 @@ class M_carreras extends CI_Model{
 			$id_carrera = 1;
 
 		$datos = array(
-			'id_facultad' => $facultad,
-			'id_carrera' => $id_carrera,
-			'carrera' => $carrera,
-			'estado' => $estado
+			'id_facultad' 	=> $facultad,
+			'id_carrera' 	=> $id_carrera,
+			'codigo' 		=> $codigo,
+			'carrera' 		=> $carrera,
+			'tipo'			=> $tipo,
+			'estado' 		=> $estado,
 		);
 
 		$this->db->insert('carreras', $datos);
@@ -120,7 +121,7 @@ class M_carreras extends CI_Model{
 		return $result;
 	}
 */	
-	function get_asignaturas($id_facultad = false, $id_carrera = false, $id_curso = false, $id_asignatura = false){
+/*	function get_asignaturas($id_facultad = false, $id_carrera = false, $id_curso = false, $id_asignatura = false){
 		if($id_facultad)
 			$this->db->where('id_facultad', $id_facultad);
 		if($id_carrera)

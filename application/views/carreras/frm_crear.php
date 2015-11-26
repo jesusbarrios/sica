@@ -136,6 +136,22 @@
 				form_dropdown('slc_facultad', $opciones, set_value('slc_facultad'), 'id="slc_facultad"'),
 			));
 		}
+
+		//CAMPO: CODIGO
+		$txt_codigo = array(
+			'type' => 'text',
+			'name' => 'txt_codigo',
+			'id' => 'txt_codigo',
+			'value' => set_value('txt_codigo'),
+			'size' => '10',
+			'maxlength' => '10',
+		);
+		
+		$this->table->add_row(array(
+			form_label('Código:', 'txt_codigo'),
+			form_input($txt_codigo) .
+			form_error('txt_codigo', '<div class="error">', '</div>')
+		));
 		
 		//CAMPO: NOMBRE DE LA CARRERA
 		$txt_carrera = array(
@@ -152,21 +168,14 @@
 			form_input($txt_carrera) .
 			form_error('txt_carrera', '<div class="error">', '</div>')
 		));
-		
+
 		//CAMPO: CANTIDAD DE CURSOS
-		$txt_cursos = array(
-			'type' => 'text',
-			'name' => 'txt_cursos',
-			'id' => 'txt_cursos',
-			'value' => set_value('txt_cursos'),
-			'size' => '3',
-			'maxlength' => '3',
-		);
+		$slc_tipo = array('' => '-----', 'Semestral' => 'Semestral', 'Anual' => 'Anual');
 		
 		$this->table->add_row(array(
-			form_label('Cantidad de cursos:'),
-			form_input($txt_cursos) .
-			form_error('txt_cursos', '<div class="error">', '</div>')
+			form_label('Tipo:', 'slc_tipo'),
+			form_dropdown('slc_tipo', $slc_tipo) .
+			form_error('slc_tipo', '<div class="error">', '</div>')
 		));
 		
 		//BOTON GUARDAR

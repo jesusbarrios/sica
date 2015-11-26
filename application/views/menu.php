@@ -124,11 +124,11 @@
 											'<a href=' . base_url() . 'index.php/carreras/habilitar>Habilitación de carrera</a>',
 	//										'<a href=' . base_url() . 'sedes/asignar_carrera>Asignar Carrera</a>',
 											),
-				'Facultades' => array(
+//				'Facultades' => array(
 //											'<a href=' . base_url() . 'index.php/sedes/reporte>Reporte</a>',
-											'<a href=' . base_url() . 'index.php/facultades/crear>Nueva facultad</a>',
+//											'<a href=' . base_url() . 'index.php/facultades/crear>Nueva facultad</a>',
 	//										'<a href=' . base_url() . 'sedes/asignar_carrera>Asignar Carrera</a>',
-											),
+//											),
 				'Usuarios' => array(
 //											'<a href=' . base_url() . 'index.php/sedes/reporte>Reporte</a>',
 											'<a href=' . base_url() . 'index.php/usuario/recuperar_clave>Recuperar clave</a>',

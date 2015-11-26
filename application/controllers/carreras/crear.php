@@ -15,11 +15,8 @@ class Crear extends CI_Controller {
 //		$this->load->model('m_inscripcion', '', TRUE);
 
 		if(!$this->session->userdata('logged_in')){
-
 			redirect('', 'refresh');			
-
 		}
-
 	}
 	
 	function index(){
@@ -27,7 +24,8 @@ class Crear extends CI_Controller {
 		$this->load->view('menu', FALSE);
 		
 		$this->form_validation->set_rules('txt_carrera', 'Carrera', 'required|min_length[10]|max_length[100]|callback_es_unico');
-		$this->form_validation->set_rules('txt_cursos', 'Cursos', 'required|min_length[0]|max_length[3]|is_natural');
+		$this->form_validation->set_rules('txt_codigo', 'Código', 'required');
+		$this->form_validation->set_rules('slc_tipo', 'Tipo', 'required');
 		
 		$this->form_validation->set_message('required', 'El campo es obligatorio');
 		$this->form_validation->set_message('min_length', 'Debe contener un minimo de 10 caracteres');
@@ -35,45 +33,34 @@ class Crear extends CI_Controller {
 		$this->form_validation->set_message('es_unico', 'Esta carrera ya existe');
 		$this->form_validation->set_message('is_natural', 'Debe contener un número positivo');
 
-		$carrera = $this->input->post('txt_carrera');
-		
 		if($session_data = $this->session->userdata('logged_in')){
 			if($session_data["id_rol"] == 1){
+				$facultades = $this->m_facultades->get_facultades();
 				$this->form_validation->set_rules('slc_facultad', 'Facultad', 'required');
 				$id_facultad = $this->input->post('slc_facultad');
 			}else{
+				$facultades = false;
 				$id_facultad = $session_data["id_facultad"];
 			}
 		}
 		
 		if ($this->form_validation->run()){
-			$cantidad_curso = $this->input->post('txt_cursos');
+			$codigo				= $this->input->post('txt_codigo');
+			$carrera = $this->input->post('txt_carrera');
+			$tipo 				= $this->input->post('slc_tipo');
 			$estado = '1';
 			
-			$this->m_carreras->guardar($id_facultad, $carrera, $estado, $cantidad_curso);
+			$this->m_carreras->guardar($id_facultad, $codigo, $carrera, $tipo, $estado);
 			
 			$msn = 'La carrera se agrego exitosamente';
 			
-		}else{
+		}else
 			$msn = false;
-		}
 		
-		if($session_data = $this->session->userdata('logged_in')){
-			if($session_data["id_rol"] == 1){
-				$facultades = $this->m_facultades->get_facultades();
-				if($facultades && $facultades->num_rows() == 1){
-					$facultades_ = $facultades->row_array();
-					$carreras = $this->m_carreras->get_carreras($facultades_['id_facultad']);	
-				}else if($facultades && $id_facultad){
-					$carreras = $this->m_carreras->get_carreras($id_facultad);	
-				}else{
-					$carreras = false;
-				}
-			}else{
-				$facultades = false;
-				$carreras = $this->m_carreras->get_carreras($session_data["id_facultad"]);	
-			}
-		}
+		if($id_facultad)
+			$carreras = $this->m_carreras->get_carreras($id_facultad);	
+		else
+			$carreras = false;
 		
 		
 		$datos = array(
