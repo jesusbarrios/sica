@@ -29,29 +29,28 @@
 		    border-radius: 7px 7px 7px 7px;
 		    padding: 2px 15px;
 		}
+		table{
+			margin: 20px 0px;
+		}
+		table td{
+			vertical-align: top;
+			padding: 10px 0px;
+		}
 		label {
 		    float: left;
-		    margin-top: 20px;
 		    padding-right: 7px;
 		    text-align: right;
 		    vertical-align: top;
 		    width: 100px;
 		}
-		input {
-		    margin-top: 20px;
-		}
-		input[type="submit"] {
-		    margin: 20px 65px;
-		}
 		.msn_error{
 		    background: none repeat scroll 0 0 #FF9E9E;
 		    border: 1px solid #AA8888;
 		    font-size: 13px;
-		    margin: 2px;
-		    padding: 1px;
+		    margin: 5px 0px;
 		    text-align: center;
 		}
-		
+
 		a{
 			font-style: italic;
 			margin: 20px 65px;
@@ -87,18 +86,25 @@
 
 		echo form_fieldset('Registro de Usuario');		
 
-		echo form_label('Cuenta:', $usuario['name']);
-		echo form_input($usuario) . "<br>";
-		echo form_error($usuario['name'], '<div class="msn_error">', '</div>');			
+		$this->table->add_row(array(
+			form_label('Cuenta:', 'txt_usuario'),
+			form_input($usuario) .
+			form_error('txt_usuario', '<div class="msn_error">', '</div>'),
+		));
 
-		echo form_label('Clave:', $clave['name']);
-		echo form_password($clave) . "<br>";
-		echo form_error($clave['name'], '<div class="msn_error">', '</div>');
+		$this->table->add_row(array(
+			form_label('Clave:', 'txt_clave'),
+			form_password($clave) . "<br>" .
+			form_error('txt_clave', '<div class="msn_error">', '</div>'),
+		));
 
-		echo form_submit($boton);
+		$this->table->add_row(array(
+			false,
+			form_submit($boton),
+		));
 		
 //		echo "<a href=" . base_url() . "index.phpinscripcion/cpi>Inscripción al CPI</a>";
-
+		echo $this->table->generate();
 		echo form_fieldset_close();
 		echo form_close();
 	?>

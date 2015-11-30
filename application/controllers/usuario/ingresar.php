@@ -38,6 +38,9 @@ class Ingresar extends CI_Controller {
 
 
 	function check_database($clave){
+		$id_facultad= 1; //cyt
+//		$id_facultad= 2; //facea
+
 		$documento 	= $this->input->post('txt_usuario');
 		$documentos	= $this->user->get_documentos(false, false, $documento);
 		if($documentos){
@@ -46,11 +49,12 @@ class Ingresar extends CI_Controller {
 			$personas 	= $this->user->get_personas($id_persona, false, false, false, false, false, false, false, false, $clave);
 			if($personas){
 				$persona 	= $personas->row_array();
-				$usuarios 	= $this->user->get_usuarios(false, false, $id_persona, false, true, true);
+				$usuarios 	= $this->user->get_usuarios($id_facultad, false, $id_persona, false, true, true);
 				if($usuarios){
 					$usuario = $usuarios->row_array();
 					$sess_array = array(
-						'id_facultad' 	=> $usuario['id_facultad'],
+//						'id_facultad' 	=> $usuario['id_facultad'],
+						'id_facultad' 	=> $id_facultad,
 						'id_sede' 		=> $usuario['id_sede'],
 						'id_persona' 	=> $persona['id_persona'],
 						'alias' 		=> $persona['alias'],
