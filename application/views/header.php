@@ -29,9 +29,16 @@
 <body>
 	
 	<div id="header">
-
+	<?php
+		$url = base_url();
+		$url2 = parse_url($url);
+		if($url2['host'] == 'localhost')
+			$facultad 	= 'Desarrollo';
+		else if($url2['host'] == 'cyt.uni.edu.py')
+			$facultad 	= 'FACULTAD DE CIENCIAS Y TECNOLOGIA';
+	?>
 		<h1>UNIVERSIDAD NACIONAL DE ITAPUA</h1>
-		<h2>FACULTAD DE CIENCIAS Y TECNOLOGIA</h2>
+		<h2><?=$facultad?></h2>
 		<h3>Sistema Informático de Control Académico</h3>
 
 	</div>
