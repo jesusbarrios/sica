@@ -159,10 +159,12 @@ class M_carreras extends CI_Model{
 	}
 	
 	function eliminar_relacion_sede_carrera($id_facultad, $id_sede, $id_carrera){
-		$this->db->where('id_facultad', $id_facultad);
-		$this->db->where('id_sede', $id_sede);
-		$this->db->where('id_carrera', $id_carrera);
-		$this->db->delete('relacion_sede_carrera');
+		$datos = array(
+			'id_facultad' => $id_facultad,
+			'id_sede' => $id_sede,
+			'id_carrera' => $id_carrera,
+		);
+		$result = $this->db->delete('relacion_sede_carrera', $datos);
 	}
 
 /*	

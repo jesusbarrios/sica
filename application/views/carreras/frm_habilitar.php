@@ -75,6 +75,9 @@
 		    font-weight: bold;
 		    padding: 2px 20px;
 		}
+		table td{
+			padding: 2px 0px;
+		}
 		label {
 		    color: #000000;
 		    float: left;
@@ -129,6 +132,24 @@
 		//MENSAJE
 		if($msn)
 			echo "<div class=ok>$msn</div>";
+
+
+		/*
+		*
+		*FACULTADES
+		*
+		*/
+		if($facultades){
+			if($facultades->num_rows() > 1)
+				$opcionnes = array('' => '-----');
+			foreach($facultades->result() as $row)	
+				$opcionnes[$row->id_facultad] = $row->facultad;
+			$this->table->add_row(array(
+				form_label('Facultad:'),
+				form_dropdown('slc_facultad', $opcionnes, set_value('slc_facultad'), 'id=slc_facultad') .
+				form_error('slc_facultad', '<div class="error">', '</div>')
+			));
+		}
 		
 		/*
 		*
@@ -150,25 +171,6 @@
 		}else{
 			$opcionnes = array('' => '-----');
 		}
-		
-		/*
-		*
-		*FACULTADES
-		*
-		*/
-		if($facultades){
-			if($facultades->num_rows() > 1)
-				$opcionnes = array('' => '-----');
-			foreach($facultades->result() as $row)	
-				$opcionnes[$row->id_facultad] = $row->facultad;
-		}else
-			$opcionnes = array('' => '-----');
-
-		$this->table->add_row(array(
-			form_label('Facultad:'),
-			form_dropdown('slc_facultad', $opcionnes, set_value('slc_facultad'), 'id=slc_facultad') .
-			form_error('slc_facultad', '<div class="error">', '</div>')
-		));
 
 		/*
 		*
@@ -195,7 +197,7 @@
 			'id' => 'btn_guardar',
 			'type' => 'submit',
 			'value' => 'Guardar',
-			'disabled' => 'true',
+//			'disabled' => 'true',
 		);
 
 		$this->table->add_row(array(

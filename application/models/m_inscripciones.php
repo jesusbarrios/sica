@@ -1,6 +1,6 @@
 <?php
 
-class M_inscripciones_curso extends CI_Model{
+class M_inscripciones extends CI_Model{
 
 	/*
 	*INSCRIPCIONES

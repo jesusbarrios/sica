@@ -11,7 +11,8 @@ class Habilitar extends CI_Controller {
 		$this->load->model('m_facultades', '', TRUE);
 		$this->load->model('m_sedes', '', TRUE);
 		$this->load->model('m_carreras', '', TRUE);
-		$this->load->model('m_inscripciones_curso', '', TRUE);
+		$this->load->model('m_inscripciones', '', TRUE);
+		$this->load->model('user', '', TRUE);
 
 		if(!$this->session->userdata('logged_in')){
 
@@ -42,21 +43,23 @@ class Habilitar extends CI_Controller {
 	function index(){
 		$this->load->view('header', FALSE);
 		$this->load->view('menu', FALSE);
-		
+
 		$this->form_validation->set_rules('slc_sede', 'Sede', 'required');
 		$this->form_validation->set_rules('slc_carrera', 'Carrera', 'required|callback_validar');
-		$this->form_validation->set_rules('txt_creacion', 'Fecha', 'required|callback_validar_fecha');
-		
+//		$this->form_validation->set_rules('txt_creacion', 'Fecha', 'required|callback_validar_fecha');
+
 		$this->form_validation->set_message('required', 'El campo es obligatorio');
 		$this->form_validation->set_message('validar', 'Esta relacion ya existe');
 		$this->form_validation->set_message('validar_fecha', 'La fecha es invalida, respetar el formato YYYY-mm-dd');
-		
+
 		if($session_data = $this->session->userdata('logged_in')){
-			if($session_data["id_facultad"] == 1){
+			if($session_data["id_rol"] == 1){
 				$this->form_validation->set_rules('slc_facultad', 'Facultad', 'required');
 				$id_facultad = $this->input->post('slc_facultad');
-			}else {
+				$facultades = $this->m_facultades->get_facultades();
+			}else if($session_data["id_rol"] == 3){
 				$id_facultad = $session_data["id_facultad"];
+				$facultades = false;
 			}
 		}
 		$id_sede = $this->input->post('slc_sede');
@@ -71,25 +74,13 @@ class Habilitar extends CI_Controller {
 		}
 
 		$sedes 	= $this->m_sedes->get_sedes();
-		if($session_data = $this->session->userdata('logged_in')){
-			if($session_data["id_facultad"] == 1){
-				$facultades = $this->m_facultades->get_facultades();
-				if($facultades && $facultades->row_array() == 1 && !$id_facultad){
-					$facultades_ = $facultades->row_array();
-					$id_facultad = $facultades_['id_facultad'];
-				}
-			}
-		}
-
-		if($sedes && $sedes->num_rows() == 1 && !$id_sede){
-			$sedes_ 	= $sedes->row_array();
-			$id_sede 	= $sedes_['id_sede'];
-		}
 
 		if($id_facultad){
 			$carreras = $this->m_carreras->get_carreras($id_facultad, false);
 			if($id_sede)
 				$relaciones = $this->m_carreras->get_relacion_sede_carrera($id_facultad, $id_sede);
+			else
+				$relaciones = false;
 		}else{
 			$relaciones = false;
 			$carreras = false;
@@ -113,9 +104,9 @@ class Habilitar extends CI_Controller {
 	
 	function obtener_nombre(){
 		if($session_data = $this->session->userdata('logged_in')){
-			if($session_data["id_facultad"] == 1)
+			if($session_data["id_rol"] == 1) //Desarrollo
 				$id_facultad = $this->input->post('scl_facultad');
-			else
+			else if($session_data["id_rol"] == 3) //Direccion acdemica
 				$id_facultad = $session_data["id_facultad"];
 		}
 
@@ -139,9 +130,9 @@ class Habilitar extends CI_Controller {
 	
 	function eliminar(){
 		if($session_data = $this->session->userdata('logged_in')){
-			if($session_data["id_facultad"] == 1)
+			if($session_data["id_rol"] == 1) //Desarrollo
 				$id_facultad = $this->input->post('slc_facultad');
-			else
+			else if($session_data["id_rol"] == 3) //Direccion acdemica
 				$id_facultad = $session_data["id_facultad"];
 		}
 		$id_sede = $this->input->post('slc_sede');
@@ -158,9 +149,9 @@ class Habilitar extends CI_Controller {
 	
 	function cambiar_estado(){
 		if($session_data = $this->session->userdata('logged_in')){
-			if($session_data["id_facultad"] == 1)
+			if($session_data["id_rol"] == 1) //Desarrollo
 				$id_facultad = $this->input->post('slc_facultad');
-			else
+			else if($session_data["id_rol"] == 3) //Direccion acdemica
 				$id_facultad = $session_data["id_facultad"];
 		}
 		$id_sede 	= $this->input->post('slc_sede');
@@ -197,9 +188,9 @@ class Habilitar extends CI_Controller {
 	
 	function actualizar_detalle(){
 		if($session_data = $this->session->userdata('logged_in')){
-			if($session_data["id_facultad"] == 1)
+			if($session_data["id_rol"] == 1) //Desarrollo
 				$id_facultad = $this->input->post('slc_facultad');
-			else
+			else if($session_data['id_rol'] == 3) //Direccion academica
 				$id_facultad = $session_data["id_facultad"];	
 		}
 		$id_sede = $this->input->post('slc_sede');

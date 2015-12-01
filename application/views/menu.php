@@ -124,11 +124,9 @@
 											'<a href=' . base_url() . 'index.php/carreras/habilitar>Habilitación de carrera</a>',
 	//										'<a href=' . base_url() . 'sedes/asignar_carrera>Asignar Carrera</a>',
 											),
-//				'Facultades' => array(
-//											'<a href=' . base_url() . 'index.php/sedes/reporte>Reporte</a>',
-//											'<a href=' . base_url() . 'index.php/facultades/crear>Nueva facultad</a>',
-	//										'<a href=' . base_url() . 'sedes/asignar_carrera>Asignar Carrera</a>',
-//											),
+				'Facultades' => array(
+											'<a href=' . base_url() . 'index.php/facultades/crear>Nueva facultad</a>',
+											),
 				'Usuarios' => array(
 //											'<a href=' . base_url() . 'index.php/sedes/reporte>Reporte</a>',
 											'<a href=' . base_url() . 'index.php/usuario/recuperar_clave>Recuperar clave</a>',
@@ -190,6 +188,13 @@
 				'Periodos' => array(
 											'<a href=' . base_url() . 'index.php/periodos/asignaturas>Asignaturas</a>',
 											'<a href=' . base_url() . 'index.php/periodos/evaluaciones>Evaluaciones</a>',
+											),
+
+				'Sedes' => array(
+//											'<a href=' . base_url() . 'index.php/sedes/reporte>Reporte</a>',
+											'<a href=' . base_url() . 'index.php/sedes/crear>Nueva sede</a>',
+											'<a href=' . base_url() . 'index.php/carreras/habilitar>Habilitación de carrera</a>',
+	//										'<a href=' . base_url() . 'sedes/asignar_carrera>Asignar Carrera</a>',
 											),
 			);
 			

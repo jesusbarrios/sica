@@ -25,13 +25,11 @@ class Crear extends CI_Controller {
 		$this->form_validation->set_message('min_length', 'Debe contener un minimo de 10 caracteres');
 		$this->form_validation->set_message('max_length', 'Debe contener un máximo de 45 caracteres');
 		$this->form_validation->set_message('validar', 'Esta sede ya existe');
+
+		$session_data = $this->session->userdata('logged_in');
 		
 		if($this->form_validation->run()){
 
-/*			$session_data = $this->session->userdata('logged_in');
-			$id_facultad = $session_data["id_facultad"];
-			$id =  $this->sedes->get_id_max() + 1;
-*/
 			$estado = '1';
 			$sede = $this->input->post('txt_sede');
 			$this->m_sedes->guardar($sede, $estado);

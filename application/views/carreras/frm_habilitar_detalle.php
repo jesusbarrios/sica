@@ -85,12 +85,13 @@
 	if($relaciones){
 		$contador = 1;
 		foreach($relaciones->result() as $row){
-			$inscripciones = $this->m_inscripciones_curso->get_inscripciones(false, $row->id_facultad, $row->id_sede);
+			$inscripciones 	= $this->m_inscripciones->get_inscripciones(false, $row->id_facultad, $row->id_sede);
+			$usuarios 		= $this->user->get_usuarios($row->id_facultad, $row->id_sede);
 			$this->table->add_row(array(
 				$contador ++,
 				$row->carrera,
 				date('d/m/Y', strtotime($row->creacion)),
-				($inscripciones)? '-En uso-' : '<span class=eliminar id=' . $row->id_carrera . '>Eliminar</span>',
+				($inscripciones || $usuarios)? '-----' : '<span class=eliminar id=' . $row->id_carrera . '>Eliminar</span>',
 				($row->estado)? '<span class=desabilitar id=' . $row->id_carrera . '>Desabilitar</span>' : '<span class=habilitar id=' . $row->id_carrera . '>Habilitar</span>',
 			));
 		}
