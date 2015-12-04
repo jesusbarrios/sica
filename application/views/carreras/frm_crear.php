@@ -25,19 +25,21 @@
 		    	$('#msn').hide('slow');
 			});
 			
-			$('#btn_cancelar').click(function() {				
-				$('#txt_carrera')
-				.val('')
-				.focus();
-				$('#msn').hide();
-				
-				$('#txt_cursos').val('');
+			$('#btn_cancelar').click(function() {
+				if($('#slc_facultad').val())
+					$('#slc_facultad').val('').focus();
+				else
+					$('#txt_carrera').focus();
+				$('#txt_codigo').val('');
+				$('#txt_carrera').val('');
+				$('#slc_tipo').val('');
+				$('#detalles').html('');
 			});
 			
 			$('#slc_facultad').change(function() {
 				id = $(this).val();
-				$.post('<?=base_url()?>index.php/carreras/crear/actualizar_detalle', {id : id}, function (respuesta) {
-					$('#detalle').html(respuesta);
+				$.post('<?=base_url()?>index.php/carreras/crear/actualizar_detalle', {slc_facultad : id}, function (respuesta) {
+					$('#detalles').html(respuesta);
 				});
 			})
 		});
@@ -83,7 +85,7 @@
 		    background: none repeat scroll 0 0 #FF9E9E;
 		    border: 1px solid #AA8888;
 		    font-size: 12px;
-		    margin: 2px;
+		    margin: 2px 0px;
 		    padding: 1px 3px;
 		    text-align: left;
 		}
@@ -104,8 +106,13 @@
 		    padding: 0 2px;
 		}
 		
-		table{
+		table.frm{
 			margin: 10px auto;
+		}
+
+		table.frm td{
+			padding: 3px;
+			vertical-align: top;
 		}
 	</style>
 	
@@ -124,16 +131,15 @@
 		}
 		
 		if($facultades){
-			$opciones = array();
-			if($facultades->num_rows() > 1)
-				$opciones[] = '-----';
+			$slc_facultad = array('' => '-----');
 			foreach($facultades->result() as $row){
-				$opciones[$row->id_facultad] = $row->facultad;
+				$slc_facultad[$row->id_facultad] = $row->facultad;
 			}
 			
 			$this->table->add_row(array(
 				form_label('Facultad:', 'slc_facultad'),
-				form_dropdown('slc_facultad', $opciones, set_value('slc_facultad'), 'id="slc_facultad"'),
+				form_dropdown('slc_facultad', $slc_facultad, set_value('slc_facultad'), 'id="slc_facultad"') .
+				form_error('slc_facultad', '<div class="error">', '</div>')
 			));
 		}
 
@@ -164,17 +170,17 @@
 		);
 		
 		$this->table->add_row(array(
-			form_label('Nombre de la carrera:'),
+			form_label('Nombre:'),
 			form_input($txt_carrera) .
 			form_error('txt_carrera', '<div class="error">', '</div>')
 		));
 
-		//CAMPO: CANTIDAD DE CURSOS
-		$slc_tipo = array('' => '-----', 'Semestral' => 'Semestral', 'Anual' => 'Anual');
+		//TIPO
+		$slc_tipo = array('' => '-----', 'Semestral' => 'Semestral', 'Anual' => 'Anual', 'Modular' => 'Modular');
 		
 		$this->table->add_row(array(
 			form_label('Tipo:', 'slc_tipo'),
-			form_dropdown('slc_tipo', $slc_tipo) .
+			form_dropdown('slc_tipo', $slc_tipo, set_value('slc_tipo'), 'id=slc_tipo') .
 			form_error('slc_tipo', '<div class="error">', '</div>')
 		));
 		
@@ -198,10 +204,10 @@
 		));
 		
 		$this->table->add_row(array(
-			array('data' => $detalle, 'colspan' => '2', 'id' => 'detalle'),
+			array('data' => $detalle, 'colspan' => '2', 'id' => 'detalles'),
 		));	
 		
-		$this->table->set_template(array('table_open' => '<table cellspacing= "0", border="0">'));
+		$this->table->set_template(array('table_open' => '<table cellspacing= "0", border="0", class= "frm">'));
 		echo $this->table->generate();		
 		echo form_fieldset_close();
 		echo form_close();

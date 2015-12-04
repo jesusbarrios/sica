@@ -169,15 +169,21 @@ class Habilitar extends CI_Controller {
 
 	
 	function actualizar_slc_carrera(){
-		$id_facultad= $this->input->post('slc_facultad');
+		if($session_data = $this->session->userdata('logged_in')){
+			if($session_data["id_rol"] == 1) //Desarrollo
+				$id_facultad = $this->input->post('slc_facultad');
+			else if($session_data["id_rol"] == 3) //Direccion acdemica
+				$id_facultad = $session_data["id_facultad"];
+		}
 		if($id_facultad){
 			$carreras 	= $this->m_carreras->get_carreras($id_facultad);
 			$opciones 	= '';
 			if($carreras){
 				if($carreras->num_rows() > 1)
 					$opciones .= '<option value="">-----</option>';
-				foreach($carreras->result() as $row)
+				foreach($carreras->result() as $row){
 					$opciones .= "<option value=$row->id_carrera>$row->carrera</option>";
+				}
 			}else
 				$opciones .= '<option value="">-----</option>';
 		}else

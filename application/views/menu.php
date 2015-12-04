@@ -100,7 +100,6 @@
 											'<a href=' . base_url() . 'index.php/inscripcion/reporte>reporte</a>',
 	//										'<a href=' . base_url() . 'inscripcion/evaluacion_recuperatorio>a examen recuperatorio</a>',
 											),
-				
 				'Reportes' => array(
 											'<a href=' . base_url() . 'index.php/reportes/inscripcion>Inscripcion</a>',
 											),
@@ -108,24 +107,29 @@
 											'<a href=' . base_url() . 'index.php/periodos/asignaturas>Asignaturas</a>',
 											'<a href=' . base_url() . 'index.php/periodos/evaluaciones>Evaluaciones</a>',
 											'<a href=' . base_url() . 'index.php/periodos/periodos>Periodos</a>',	
+											'<a href=' . base_url() . 'index.php/periodos/evaluaciones>Horario de clases</a>',
+											'<a href=' . base_url() . 'index.php/periodos/evaluaciones>Horario de evaluaciones</a>',
 											),							
-				'Asignaturas' => array(
+//				'Asignaturas' => array(
 	//										'<a href=' . base_url() . 'asignaturas/reporte>Reporte</a>',
-											'<a href=' . base_url() . 'index.php/asignaturas/crear>Crear nueva asignatura</a>',
-											'<a href=' . base_url() . 'index.php/asignaturas/correlatividad>Correlatividad</a>',
-											),
+//											'<a href=' . base_url() . 'index.php/asignaturas/crear>Crear nueva asignatura</a>',
+//											'<a href=' . base_url() . 'index.php/asignaturas/correlatividad>Correlatividad</a>',
+//											),
 				'Carreras' => array(
 //											'<a href=' . base_url() . 'index.php/carreras/reporte>Reporte</a>',
-											'<a href=' . base_url() . 'index.php/carreras/crear>Nueva carrera</a>',
+											'<a href=' . base_url() . 'index.php/carreras/crear>Carreras</a>',
+											'<a href=' . base_url() . 'index.php/cursos/crear>Cursos</a>',
+											'<a href=' . base_url() . 'index.php/asignaturas/crear>Asignaturas</a>',
+											'<a href=' . base_url() . 'index.php/asignaturas/correlatividad>Correlatividades</a>',
 											),
 				'Sedes' => array(
 //											'<a href=' . base_url() . 'index.php/sedes/reporte>Reporte</a>',
-											'<a href=' . base_url() . 'index.php/sedes/crear>Nueva sede</a>',
-											'<a href=' . base_url() . 'index.php/carreras/habilitar>Habilitación de carrera</a>',
+											'<a href=' . base_url() . 'index.php/sedes/crear>Sedes</a>',
+											'<a href=' . base_url() . 'index.php/carreras/habilitar>Carreras</a>',
 	//										'<a href=' . base_url() . 'sedes/asignar_carrera>Asignar Carrera</a>',
 											),
 				'Facultades' => array(
-											'<a href=' . base_url() . 'index.php/facultades/crear>Nueva facultad</a>',
+											'<a href=' . base_url() . 'index.php/facultades/crear>Facultades</a>',
 											),
 				'Usuarios' => array(
 //											'<a href=' . base_url() . 'index.php/sedes/reporte>Reporte</a>',
@@ -188,8 +192,16 @@
 				'Periodos' => array(
 											'<a href=' . base_url() . 'index.php/periodos/asignaturas>Asignaturas</a>',
 											'<a href=' . base_url() . 'index.php/periodos/evaluaciones>Evaluaciones</a>',
+											'<a href=' . base_url() . 'index.php/periodos/evaluaciones>Horario de clases</a>',
+											'<a href=' . base_url() . 'index.php/periodos/evaluaciones>Horario de evaluaciones</a>',
 											),
-
+				'Carreras' => array(
+//											'<a href=' . base_url() . 'index.php/carreras/reporte>Reporte</a>',
+											'<a href=' . base_url() . 'index.php/carreras/crear>Carreras</a>',
+											'<a href=' . base_url() . 'index.php/cursos/crear>Cursos</a>',
+											'<a href=' . base_url() . 'index.php/asignaturas/crear>Asignaturas</a>',
+											'<a href=' . base_url() . 'index.php/asignaturas/correlatividad>Correlatividades</a>',
+											),
 				'Sedes' => array(
 //											'<a href=' . base_url() . 'index.php/sedes/reporte>Reporte</a>',
 											'<a href=' . base_url() . 'index.php/sedes/crear>Nueva sede</a>',
@@ -197,7 +209,6 @@
 	//										'<a href=' . base_url() . 'sedes/asignar_carrera>Asignar Carrera</a>',
 											),
 			);
-			
 		}
 		echo ul($menu);
 	?>

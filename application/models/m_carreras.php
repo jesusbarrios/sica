@@ -2,11 +2,13 @@
 
 class M_carreras extends CI_Model{
 
-	function get_carreras($id_facultad = false, $id_carrera = false, $carrera = false){
+	function get_carreras($id_facultad = false, $id_carrera = false, $codigo = false, $carrera = false){
 		if($id_facultad)
 			$this->db->where('id_facultad', $id_facultad);
 		if($id_carrera)
 			$this->db->where('id_carrera', $id_carrera);
+		if($codigo)
+			$this->db->where('codigo', $codigo);
 		if($carrera)
 			$this->db->where('carrera', $carrera);
 
@@ -17,55 +19,10 @@ class M_carreras extends CI_Model{
 			return $carreras;
 		return FALSE;
 	}
-	
-	function get_carrera_libre($id_facultad, $id_sede){
-		$this->db->distinct();
-		$this->db->where('t1.id_facultad', $id_facultad);
-		$this->db->where('t2.id_facultad', null);
-		$this->db->join('relacion_sede_carrera as t2', 't2.id_facultad = t1.id_facultad AND t2.id_sede = $id_sede AND t2.id_carrera = t1.id_carrera', 'left');
-		$relaciones = $this->db->get('carreras as t1');
-		if($relaciones->result())
-			return $relaciones;
-		return false;
-/*		$this->db->select('t1.id_carrera');
-		$this->db->order_by('t1.id_carrera', 'ASC');
-		$this->db->where("t2.id_sede = $id_sede");
-		$query = $this->db->get('carreras as t1, relacion_sede_carrera as t2');
 
-		if($query->num_rows() > 0)
-			return $query->result();
-		else
-			return FALSE;
-*/
-	}
-	
-	function existe_carrera($carrera){
-
-		$result = $this->db->get_where('carreras', array('carrera' => $carrera));
-
-		if($result->num_rows > 0)
-			return true;
-
-		return false;
-	}
-/*	
-	function get_id_max(){
-
-		$this->db->select('id_carrera');
-		$this->db->order_by('id_carrera', 'desc');
-		$this->db->limit(1);
-		$result = $this->db->get_where('carreras');
-
-		foreach($result->result() as $row){
-			return $row->id_carrera;
-		}
-		
-		return 0;
-	}
-*/	
-	function guardar($id_facultad, $codigo, $carrera, $tipo, $cantidad_curso, $estado){
+	function insert_carreras($id_facultad, $codigo, $carrera, $tipo, $estado){
 		$this->db->select_max('t1.id_carrera');
-		$this->db->where('t1.id_facultad', $facultad);
+		$this->db->where('t1.id_facultad', $id_facultad);
 		$carreras = $this->db->get('carreras as t1');
 		if($carreras){
 			$carreras_ = $carreras->row_array();
@@ -74,7 +31,7 @@ class M_carreras extends CI_Model{
 			$id_carrera = 1;
 
 		$datos = array(
-			'id_facultad' 	=> $facultad,
+			'id_facultad' 	=> $id_facultad,
 			'id_carrera' 	=> $id_carrera,
 			'codigo' 		=> $codigo,
 			'carrera' 		=> $carrera,
@@ -83,78 +40,14 @@ class M_carreras extends CI_Model{
 		);
 
 		$this->db->insert('carreras', $datos);
-		
-		$cursos = array('CPI', 'Primer', 'Segundo', 'Tercer', 'Cuarto', 'Quinto', 'Sexto', 'Septimo', 'Octavo', 'Noveno', 'Decimo');
-		
-		for($i = 1; $i <= $cantidad_curso + 1; $i++){
-			$datos = array(
-				'id_facultad' => $facultad,
-				'id_carrera' => $id_carrera,
-				'id_curso' => $i,
-				'curso' => (isset($cursos[$i - 1]))? $cursos[$i - 1] : $i,
-			);
-			
-			$this->db->insert('cursos', $datos);	
-		}
 	}
 	
-	function get_cursos($id_facultad = false, $id_carrera = false, $id_curso = false){
-		if($id_facultad)
-			$this->db->where('id_facultad', $id_facultad);
-		if($id_carrera)
-			$this->db->where('id_carrera', $id_carrera);
-		if($id_curso)
-			$this->db->where('id_curso', $id_curso);
-
-		$cursos = $this->db->get('cursos');
-
-		if($cursos->result())
-			return $cursos;
-		return false;
-	}
-/*	
-	function get_cantidad_semestre($id_facultad, $id_carrera){
+	function delete_carreras($id_facultad, $id_carrera){
 		$this->db->where('id_facultad', $id_facultad);
 		$this->db->where('id_carrera', $id_carrera);
-		$result = $this->db->get('semestres');
-		
-		return $result;
-	}
-*/	
-/*	function get_asignaturas($id_facultad = false, $id_carrera = false, $id_curso = false, $id_asignatura = false){
-		if($id_facultad)
-			$this->db->where('id_facultad', $id_facultad);
-		if($id_carrera)
-			$this->db->where('id_carrera', $id_carrera);
-		if($id_curso)
-			$this->db->where('id_curso', $id_curso);
-		if($id_asignatura)
-			$this->db->where('id_asignatura', $id_asignatura);
-
-		$asignaturas = $this->db->get('asignaturas');
-		
-		if($asignaturas->result())
-			return $asignaturas;
-		return false;
-	}
-/*		
-	function obtener_nombre($id){		
-		$this->db->where(array('id_carrera' => $id));
-		$result = $this->db->get('carreras');
-		
-		if($result->num_rows() > 0){
-			$row = $result->row();
-			return $row->carrera;
-		}
-		echo false;
-	}
-*/	
-	function eliminar($id_facultad, $id_carrera){
-		$this->db->delete('cursos', array('id_facultad' => $id_facultad, 'id_carrera' => $id_carrera));
-		$result = $this->db->delete('carreras', array('id_facultad' => $id_facultad, 'id_carrera' => $id_carrera));
-		if($result)
+		$carreras = $this->db->delete('carreras');
+		if($carreras)
 			return true;
-		
 		return false;
 	}
 	
@@ -167,39 +60,7 @@ class M_carreras extends CI_Model{
 		$result = $this->db->delete('relacion_sede_carrera', $datos);
 	}
 
-/*	
-	function get_inscripcion_asignatura($facultad = false, $sede = false, $carrera = false){
-		$this->db->select('*');
-		if($facultad)
-			$this->db->where('t1.id_facultad', $facultad);
-		
-		if($sede)
-			$this->db->where('t1.id_sede', $sede);
-			
-		if($carrera)
-			$this->db->where('t1.id_carrera', $carrera);
-		
-		$result = $this->db->get('inscripciones_asignatura as t1');
-		
-		if($result->result())
-			return $result;
-		return false;
-	}
-*/	
-	/*
-	*
-	*SEDES
-	*
-	*/
-/*	function get_sede($id_sede = false){
-		if($id_sede)
-			$this->db->where('sedes.id_sede', $id_sede);
-		$sedes = $this->db->get('sedes');
-		if($sedes->result())
-			return $sedes;
-		return false;
-	}
-	
+
 	/*
 	*
 	*RELACIONES SEDE CARRERA
@@ -256,60 +117,5 @@ class M_carreras extends CI_Model{
 		);
 		$this->db->update('relacion_sede_carrera', $datos);
 	}
-	
-	/*
-	*
-	*FACULTADES
-	*
-	*/
-/*	
-	function get_facultad(){
-		$facultades = $this->db->get('facultades');
-		if($facultades->result())
-			return $facultades;
-		return false;
-	}
-	/*
-	*
-	*CREACION
-	*
-	*/
-/*
-	function get_creacion($facultad = false, $sede = false, $carrera = false){
-		if($facultad && $sede && $carrera){
-			$this->db->where('id_facultad', $facultad);
-			$this->db->where('id_sede', $sede);
-			$this->db->where('id_carrera', $carrera);
-			$this->db->where('estado', true);
-			$relaciones = $this->db->get('relacion_sede_carrera');
-			if($relaciones->result()){
-				$relaciones_ = $relaciones->row_array();
-				return $relaciones_['creacion'];
-			}
-			return false;
-		}else if($facultad && $sede){
-			$this->db->select_min('creacion');
-			$this->db->where('id_facultad', $facultad);
-			$this->db->where('id_sede', $sede);
-			$this->db->where('estado', true);
-//			$this->db->group_by('creacion');
-			$relaciones = $this->db->get('relacion_sede_carrera');
-			if($relaciones->result()){
-				$relaciones_ = $relaciones->row_array();
-				return $relaciones_['creacion'];
-			}
-			return false;
-		}else if($facultad){
-			$this->db->where('id_facultad', $facultad);
-			$facultades = $this->db->get('facultades');
-			if($facultades->result()){
-				$facultad_ = $facultades->row_array();
-				return $facultad_['creacion'];
-			}
-			return false;
-		}
-		return false;
-	}
-*/
 }
 ?>

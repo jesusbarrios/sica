@@ -8,10 +8,14 @@ class Crear extends CI_Controller {
 
 		parent::__construct();
 		$this->load->library('form_validation');
+		$this->load->model('user', '', TRUE);
 		$this->load->model('m_carreras', '', TRUE);
 		$this->load->model('m_sedes', '', TRUE);
 		
-		if(!$this->session->userdata('logged_in'))
+		if($session = $this->session->userdata('logged_in')){
+			if($session['id_rol'] != 1 && $session['id_rol'] != 3)
+				redirect('', 'refresh');			
+		}else
 			redirect('', 'refresh');
 	}
 

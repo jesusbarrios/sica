@@ -13,7 +13,7 @@ class M_facultades extends CI_Model{
 		return FALSE;
 	}
 	
-	function guardar($facultad, $creacion){
+	function insert_facultades($facultad, $creacion){
 		$this->db->select_max('t1.id_facultad');
 		$facultades = $this->db->get('facultades as t1');
 		if($facultades->result()){
@@ -30,7 +30,7 @@ class M_facultades extends CI_Model{
 		$this->db->insert('facultades', $datos);
 	}
 	
-	function eliminar($id_facultad){
+	function delete_facultades($id_facultad){
 		$this->db->where('id_facultad', $id_facultad);
 		$this->db->delete('facultades');
 	}

@@ -86,23 +86,19 @@
 		$contador = 1;
 		foreach($relaciones->result() as $row){
 			$inscripciones 	= $this->m_inscripciones->get_inscripciones(false, $row->id_facultad, $row->id_sede);
-			$usuarios 		= $this->user->get_usuarios($row->id_facultad, $row->id_sede);
 			$this->table->add_row(array(
 				$contador ++,
 				$row->carrera,
 				date('d/m/Y', strtotime($row->creacion)),
-				($inscripciones || $usuarios)? '-----' : '<span class=eliminar id=' . $row->id_carrera . '>Eliminar</span>',
+				($inscripciones)? '-----' : '<span class=eliminar id=' . $row->id_carrera . '>Eliminar</span>',
 				($row->estado)? '<span class=desabilitar id=' . $row->id_carrera . '>Desabilitar</span>' : '<span class=habilitar id=' . $row->id_carrera . '>Habilitar</span>',
 			));
 		}
 		$this->table->set_heading(array('N<sup>ro</sup>', 'Carreras', 'Fechas de creación', array('data' => 'Opciones', 'colspan' => '2')));	
 		$this->table->set_template(array('table_open' => '<table cellspacing= "0", border="1" class="detalles">'));
 		$this->table->set_caption('Detalles de carreras habilitadas');
-	}else{
-		$this->table->set_template(array('table_open' => '<table cellspacing= "0", border="0" class="detalles">'));
-		$this->table->add_row('No hay carrera relaciona con la sede');
+		echo $this->table->generate();
 	}
-	echo $this->table->generate();	
 ?>
 </body>
 </html>

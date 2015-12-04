@@ -879,7 +879,6 @@ class User extends CI_Model{
 		$this->db->join('facultades as t5', 't5.id_facultad = t1.id_facultad');
 		$this->db->join('sedes as t6', 't6.id_sede = t1.id_sede');
 		$usuarios = $this->db->get('usuarios as t1');
-		
 		if($usuarios->result())
 			return $usuarios;
 		return false;

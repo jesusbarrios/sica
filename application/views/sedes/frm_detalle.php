@@ -89,10 +89,11 @@
 		foreach($sedes->result() as $row){
 			$cont ++;
 			$relaciones_sede_carrera = $this->m_carreras->get_relacion_sede_carrera($row->id_sede);
+			$usuarios = $this->user->get_usuarios(false, $row->id_sede);
 			$this->table->add_row(array(
 				$cont,
 				$row->sede,
-				($relaciones_sede_carrera)? 'En uso' : "<span class=eliminar id=$row->id_sede>Eliminar</span>",
+				($relaciones_sede_carrera || $usuarios)? 'En uso' : "<span class=eliminar id=$row->id_sede>Eliminar</span>",
 			));		
 		}
 		$this->table->set_template(array ( 'table_open'  => '<table border="1" cellpadding="2" cellspacing="0" class="tbl_detalles">' ));

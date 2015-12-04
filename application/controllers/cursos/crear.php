@@ -26,16 +26,13 @@ class Crear extends CI_Controller {
 		$this->load->view('header', FALSE);
 		$this->load->view('menu', FALSE);
 		
-		$this->form_validation->set_rules('txt_carrera', 'Carrera', 'required|max_length[100]|callback_name_validate');
-		$this->form_validation->set_rules('txt_codigo', 'Código', 'required|callback_code_validate');
+		$this->form_validation->set_rules('slc_carrera', 'Carrera', 'required');
+		$this->form_validation->set_rules('txt_curso', 'Curso', 'required|max_length[100]|callback_name_validate');
 		$this->form_validation->set_rules('slc_tipo', 'Tipo', 'required');
 		
 		$this->form_validation->set_message('required', 'El campo es obligatorio');
-		$this->form_validation->set_message('min_length', 'Debe contener un minimo de 10 caracteres');
 		$this->form_validation->set_message('max_length', 'Debe contener un máximo de 100 caracteres');
-		$this->form_validation->set_message('code_validate', 'El código ya existe!');
 		$this->form_validation->set_message('name_validate', 'El nombre ya existe!');
-		$this->form_validation->set_message('is_natural', 'Debe contener un número positivo');
 
 		if($session_data = $this->session->userdata('logged_in')){
 			if($session_data["id_rol"] == 1){
@@ -47,14 +44,17 @@ class Crear extends CI_Controller {
 				$id_facultad = $session_data["id_facultad"];
 			}
 		}
+
+		$id_carrera = $this->input->post('slc_carrera');
 		
 		if ($this->form_validation->run()){
-			$codigo	= $this->input->post('txt_codigo');
-			$carrera= $this->input->post('txt_carrera');
-			$tipo 	= $this->input->post('slc_tipo');
-			$estado = '1';
-			$this->m_carreras->insert_carreras($id_facultad, $codigo, $carrera, $tipo, $estado);
-			$msn = 'La carrera se insertó exitosamente';
+			$curso 		= $this->input->post('txt_curso');
+			$tipo 		= $this->input->post('slc_tipo');
+			$estado 	= '1';
+			
+			$this->m_cursos->insert_cursos($id_facultad, $id_carrera, $curso, $tipo, $estado);
+			
+			$msn = 'El curso se insertó exitosamente';
 			
 		}else
 			$msn = false;
@@ -64,49 +64,61 @@ class Crear extends CI_Controller {
 		else
 			$carreras = false;
 
+		if($id_facultad && $id_carrera)
+			$cursos = $this->m_cursos->get_cursos($id_facultad, $id_carrera);
+		else
+			$cursos = false;
+		
+		
 		$datos = array(
-			'carreras' 	=> $carreras,
+			'cursos' 	=> $cursos,
 			'msn' 		=> false,
 		);
-		$detalle = $this->load->view('carreras/frm_crear_detalle', $datos, TRUE);
+		$detalle = $this->load->view('cursos/frm_crear_detalle', $datos, TRUE);
 
 		$datos = array(
 			'facultades'=> $facultades,
+			'carreras'=> $carreras,
 			'detalle' 	=> $detalle,
 			'msn' 		=> $msn,
 		);
 
-		$this->load->view('carreras/frm_crear', $datos, FALSE);
+		$this->load->view('cursos/frm_crear', $datos, FALSE);
 	}
 	
-	function name_validate($carrera){
+	function name_validate($curso){
 		if($session_data = $this->session->userdata('logged_in')){
 			if($session_data["id_rol"] == 1)
 				$id_facultad = $this->input->post('slc_facultad');
 			else if($session_data["id_rol"] == 3)
 				$id_facultad = $session_data["id_facultad"];
 
-			$carreras = $this->m_carreras->get_carreras($id_facultad, false, false, $carrera);
-			if($carreras)
+			$id_carrera = $this->input->post('slc_carrera');
+			$cursos = $this->m_cursos->get_cursos($id_facultad, $id_carrera, false, $curso);
+			if($cursos)
 				return false;
 			return true;
 		}
 	}
 
-	function code_validate($codigo){
+	function actualizar_slc_carrera(){
+		$opciones = '<option value="">-----</option>';
 		if($session_data = $this->session->userdata('logged_in')){
-			if($session_data["id_rol"] == 1)
+			if($session_data['id_rol'] == 1)
 				$id_facultad = $this->input->post('slc_facultad');
-			else if($session_data["id_rol"] == 3)
-				$id_facultad = $session_data["id_facultad"];
-
-			$carreras = $this->m_carreras->get_carreras($id_facultad, false, $codigo);
-			if($carreras)
-				return false;
-			return true;
+			else
+				$id_facultad = $session_data["id_facultad"];		
+			if($id_facultad){
+				$carreras 	= $this->m_carreras->get_carreras($id_facultad);
+				if($carreras){
+					foreach($carreras->result() as $row)
+						$opciones .= "<option value=$row->id_carrera>$row->carrera</option>";
+				}
+			}
 		}
-	}	
-	
+		echo $opciones;
+	}
+
 	function actualizar_detalle($retorno = false){
 		if($session_data = $this->session->userdata('logged_in')){
 			if($session_data['id_rol'] == 1){
@@ -114,16 +126,17 @@ class Crear extends CI_Controller {
 			}else{
 				$id_facultad = $session_data["id_facultad"];		
 			}
+			$id_carrera = $this->input->post('slc_carrera');
 		}
-		if($id_facultad)
-			$carreras = $this->m_carreras->get_carreras($id_facultad);
+		if($id_facultad && $id_carrera)
+			$cursos = $this->m_cursos->get_cursos($id_facultad, $id_carrera);
 		else
-			$carreras = false;
+			$cursos = false;
 		$datos = array(
-			'carreras' => $carreras,
+			'cursos' => $cursos,
 			'msn' => false,
 		);
-		$this->load->view('carreras/frm_crear_detalle', $datos, FALSE);
+		$this->load->view('cursos/frm_crear_detalle', $datos, FALSE);
 	}
 	
 	function obtener_nombre(){
@@ -134,11 +147,12 @@ class Crear extends CI_Controller {
 				$id_facultad = $session_data["id_facultad"];		
 			}
 		}
-		$id_carrera = $this->input->post('id');
-		$carreras = $this->m_carreras->get_carreras($id_facultad, $id_carrera);
-		if($carreras){
-			$row = $carreras->row_array();
-			echo $row['carrera'];
+		$id_carrera = $this->input->post('slc_carrera');
+		$id_curso 	= $this->input->post('id');
+		$cursos 	= $this->m_cursos->get_cursos($id_facultad, $id_carrera, $id_curso);
+		if($cursos){
+			$cursos_ = $cursos->row_array();
+			echo $cursos_['curso'];
 		}
 	}
 	
@@ -150,13 +164,14 @@ class Crear extends CI_Controller {
 				$id_facultad = $session_data["id_facultad"];		
 			}
 		}
-		$id_carrera = $this->input->post('id');
-		$this->m_carreras->delete_carreras($id_facultad, $id_carrera);
-		$carreras = $this->m_carreras->get_carreras($id_facultad);
+		$id_carrera = $this->input->post('slc_carrera');
+		$id_curso 	= $this->input->post('id');
+		$this->m_cursos->delete_cursos($id_facultad, $id_carrera, $id_curso);
+		$cursos 	= $this->m_cursos->get_cursos($id_facultad, $id_carrera);
 		$datos = array(
-			'carreras' => $carreras,
+			'cursos' => $cursos,
 			'msn' => 'Se elimino exitosamente',
 		);
-		$this->load->view('carreras/frm_crear_detalle', $datos, FALSE);
+		$this->load->view('cursos/frm_crear_detalle', $datos, FALSE);
 	}
 }

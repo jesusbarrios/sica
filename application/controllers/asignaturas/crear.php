@@ -8,138 +8,209 @@ class Crear extends CI_Controller {
 
 		parent::__construct();
 
+		$this->load->model('m_facultades', '', TRUE);
 		$this->load->model('m_carreras', '', TRUE);
-		$this->load->model('m_sedes', '', TRUE);
+		$this->load->model('m_cursos', '', TRUE);
 		$this->load->model('m_asignaturas', '', TRUE);
+		$this->load->model('m_inscripciones', '', TRUE);
 
-		if(!$this->session->userdata('logged_in')){
-			redirect('', 'refresh');			
-		}
+		if($session = $this->session->userdata('logged_in')){
+			if($session['id_rol'] != 1 && $session['id_rol'] != 3)
+				redirect('', 'refresh');			
+		}else
+			redirect('', 'refresh');
 	}
 	
 	function index(){
 		$this->load->view('header', FALSE);
 		$this->load->view('menu', FALSE);
-
+		
 		$this->form_validation->set_rules('slc_carrera', 'Carrera', 'required');
-		$this->form_validation->set_rules('slc_semestre', 'Semestre', 'required');
-		$this->form_validation->set_rules('txt_asignatura', 'Asignatura', 'required|min_length[5]|max_length[100]|callback_es_unico');
-
-		$this->form_validation->set_message('required', 'El campo %s es obligatorio');
-		$this->form_validation->set_message('min_length', 'Debe contener un minimo de 10 caracteres');
+		$this->form_validation->set_rules('slc_curso', 'Curso', 'required');
+		$this->form_validation->set_rules('txt_codigo', 'Código', 'required|max_length[15]|callback_code_validate');
+		$this->form_validation->set_rules('txt_asignatura', 'Asignatura', 'required|max_length[100]|callback_name_validate');
+	
+		$this->form_validation->set_message('required', 'El campo es obligatorio');
 		$this->form_validation->set_message('max_length', 'Debe contener un máximo de 100 caracteres');
-		$this->form_validation->set_message('es_unico', 'Esta asignatura ya existe');
+		$this->form_validation->set_message('code_validate', 'El codigo ya existe!');
+		$this->form_validation->set_message('name_validate', 'El nombre ya existe!');
+
+		if($session_data = $this->session->userdata('logged_in')){
+			if($session_data["id_rol"] == 1){
+				$facultades = $this->m_facultades->get_facultades();
+				$this->form_validation->set_rules('slc_facultad', 'Facultad', 'required');
+				$id_facultad = $this->input->post('slc_facultad');
+			}else{
+				$facultades = false;
+				$id_facultad = $session_data["id_facultad"];
+			}
+		}
 
 		$id_carrera = $this->input->post('slc_carrera');
-		$id_curso = $this->input->post('slc_curso'); 
-
-		$session_data = $this->session->userdata('logged_in');
-		$id_facultad = $session_data["id_facultad"];
-
-		$frm_msn = $frm_msn_class = false;
-
+		$id_curso = $this->input->post('slc_curso');
+		
 		if ($this->form_validation->run()){
-			$id =  $this->m_asignaturas->get_id_max($id_facultad, $carrera, $curso) + 1;
+			$codigo 	= $this->input->post('txt_codigo');
 			$asignatura = $this->input->post('txt_asignatura');
-			$estado = '1';
-
-			$this->m_asignaturas->guardar($id_facultad, $carrera, $curso, $id, $asignatura, $estado);
-
-		}
-		if($id_curso)
-			$detalle = $this->actualizar_detalle(true); //Parametro: retorno = true;
+			$estado 	= '1';
+			
+			$this->m_asignaturas->insert_asignaturas($id_facultad, $id_carrera, $id_curso, $codigo, $asignatura, $estado);
+			
+			$msn = 'La asignatura se insertó exitosamente';
+			
+		}else
+			$msn = false;
+		
+		if($id_facultad)
+			$carreras = $this->m_carreras->get_carreras($id_facultad);	
 		else
-			$detalle = false;
-					
-		$carreras = $this->m_carreras->get_carreras($id_facultad);
+			$carreras = false;
 
-		$cursos = ($id_carrera)? $this->m_carreras->get_cursos($id_facultad, $id_carrera) : false;
+		if($id_facultad && $id_carrera)
+			$cursos = $this->m_cursos->get_cursos($id_facultad, $id_carrera);
+		else
+			$cursos = false;
+
+		if($id_facultad && $id_carrera && $id_curso)
+			$asignaturas = $this->m_asignaturas->get_asignaturas($id_facultad, $id_carrera, $id_curso);
+		else
+			$asignaturas = false;
+		
+		
+		$datos = array(
+			'asignaturas' 	=> $asignaturas,
+			'msn' 			=> false,
+		);
+		$detalle = $this->load->view('asignaturas/frm_crear_detalle', $datos, TRUE);
 
 		$datos = array(
-			'carreras' => $carreras,
-			'cursos' => $cursos,
-			'detalle' => $detalle
+			'facultades'=> $facultades,
+			'carreras'	=> $carreras,
+			'cursos'	=> $cursos,
+			'detalle' 	=> $detalle,
+			'msn' 		=> $msn,
 		);
 
 		$this->load->view('asignaturas/frm_crear', $datos, FALSE);
 	}
-	
-	function es_unico($asignatura){
-		$session_data = $this->session->userdata('logged_in');
-		$id_facultad = $session_data["id_facultad"];
-		$carrera = $this->input->post('slc_carrera');
-		$semestre = $this->input->post('slc_semestre'); 
-		
-		if($this->asignaturas->existe_asignatura($id_facultad, $carrera, $semestre, $asignatura))
-			return false;
-			
-		return true;
-	}
 
-	function actualizar_detalle($retornar = false){
-		$session_data = $this->session->userdata('logged_in');
-		$id_facultad = $session_data["id_facultad"];
-		$carrera = $this->input->post('slc_carrera');
-		$semestre = $this->input->post('slc_semestre');
-		
-		$asignaturas = $this->m_asignaturas->get_asignaturas($id_facultad, $carrera, $semestre);
-		
-		$datos = array(
-			'asignaturas' => $asignaturas,
-			'mostrar_eliminar' => true,
-		);
-		
-		if($retornar)
-			return $this->load->view('asignaturas/frm_crear_detalle', $datos, true);
-		else
-			$this->load->view('asignaturas/frm_crear_detalle', $datos, false);
-	}
-	
-	function actualizar_slc_semestre(){
-		$session_data = $this->session->userdata('logged_in');
-		$id_facultad = $session_data["id_facultad"];
-
-		$carrera = $this->input->post('slc_carrera');
-
-		$semestres = $this->m_carreras->get_semestre($id_facultad, $carrera);
-
-		$opciones = "<option value=null>-----</option>";
-
-		if($semestres){
-			foreach($semestres->result() as $row)
-				$opciones .= "<option value=$row->id_semestre>$row->semestre</option>";	
+	function code_validate($codigo){
+		if($session_data = $this->session->userdata('logged_in')){
+			if($session_data["id_rol"] == 1)
+				$id_facultad = $this->input->post('slc_facultad');
+			else if($session_data["id_rol"] == 3)
+				$id_facultad = $session_data["id_facultad"];
+			$asignaturas 	= $this->m_asignaturas->get_asignaturas($id_facultad, false, false, false, $codigo);
+			if($asignaturas)
+				return false;
+			return true;
 		}
+	}
+	
+	function name_validate($nombre){
+		if($session_data = $this->session->userdata('logged_in')){
+			if($session_data["id_rol"] == 1)
+				$id_facultad = $this->input->post('slc_facultad');
+			else if($session_data["id_rol"] == 3)
+				$id_facultad = $session_data["id_facultad"];
 
+			$id_carrera 	= $this->input->post('slc_carrera');
+			$asignaturas 	= $this->m_asignaturas->get_asignaturas($id_facultad, $id_carrera, false, false, false, $nombre);
+			if($asignaturas)
+				return false;
+			return true;
+		}
+	}
+
+	function actualizar_slc_carrera(){
+		$opciones = '<option value="">-----</option>';
+		if($session_data = $this->session->userdata('logged_in')){
+			if($session_data["id_rol"] == 1)
+				$id_facultad = $this->input->post('slc_facultad');
+			else if($session_data["id_rol"] == 3)
+				$id_facultad = $session_data["id_facultad"];
+			if($id_facultad){
+				$carreras 	= $this->m_carreras->get_carreras($id_facultad);
+				if($carreras)
+					foreach($carreras->result() as $row)
+						$opciones .= "<option value=$row->id_carrera>$row->carrera</option>";
+			}
+		}
 		echo $opciones;
 	}
 
-	function eliminar(){
-		$session_data = $this->session->userdata('logged_in');
-		$id_facultad = $session_data["id_facultad"];
-		$carrera = $this->input->post('slc_carrera');
-		$semestre = $this->input->post('slc_semestre');
-		$asignatura = $this->input->post('asignatura');
-		
-		$asignaturas = $this->m_asignaturas->get_asignatura($id_facultad, $carrera, $semestre, $asignatura);		
-		$this->m_asignaturas->eliminar($id_facultad, $carrera, $semestre, $asignatura);
-		
-		foreach($asignaturas->result() as $row)
-			$nombre_asignatura = $row->asignatura;
-			
-		$mensaje_ok = "La asignatura <b> $nombre_asignatura </b> fue eliminada";
-
-		$this->actualizar_detalle(false, $mensaje_ok);
+	function actualizar_slc_curso(){
+		$opciones = '<option value="">-----</option>';
+		if($session_data = $this->session->userdata('logged_in')){
+			if($session_data["id_rol"] == 1)
+				$id_facultad = $this->input->post('slc_facultad');
+			else if($session_data["id_rol"] == 3)
+				$id_facultad = $session_data["id_facultad"];
+			$id_carrera = $this->input->post('slc_carrera');
+			if($id_facultad && $id_carrera){
+				$cursos 	= $this->m_cursos->get_cursos($id_facultad, $id_carrera);
+				if($cursos)
+					foreach($cursos->result() as $row)
+						$opciones .= "<option value=$row->id_curso>$row->curso</option>";
+			}
+		}
+		echo $opciones;
 	}
 
-	function obtener_nombre_asignatura(){
-		$session_data = $this->session->userdata('logged_in');
-		$id_facultad = $session_data["id_facultad"];
-		$carrera = $this->input->post('slc_carrera');
-		$semestre = $this->input->post('slc_semestre');
-		$asignatura = $this->input->post('asignatura');
+	function actualizar_detalle($retorno = false){
+		if($session_data = $this->session->userdata('logged_in')){
+			if($session_data['id_rol'] == 1)
+				$id_facultad = $this->input->post('slc_facultad');
+			else
+				$id_facultad = $session_data["id_facultad"];		
+			$id_carrera = $this->input->post('slc_carrera');
+			$id_curso 	= $this->input->post('slc_curso');
+			if($id_facultad && $id_carrera && $id_curso)
+				$asignaturas= $this->m_asignaturas->get_asignaturas($id_facultad, $id_carrera, $id_curso);
+			else
+				$asignaturas = false;
 
-		$asignatura = $this->m_asignaturas->get_asignatura($id_facultad, $carrera, $semestre, $asignatura);
-		foreach($asignatura->result() as $row)
-			echo $row->asignatura;
+			$datos = array(
+				'asignaturas' => $asignaturas,
+				'msn' => false,
+			);
+			$this->load->view('asignaturas/frm_crear_detalle', $datos, FALSE);
+		}
+	}
+	
+	function obtener_nombre(){
+		if($session_data = $this->session->userdata('logged_in')){
+			if($session_data['id_rol'] == 1)
+				$id_facultad = $this->input->post('slc_facultad');
+			else
+				$id_facultad = $session_data["id_facultad"];		
+			$id_carrera 	= $this->input->post('slc_carrera');
+			$id_curso 		= $this->input->post('slc_curso');
+			$id_asignatura 	= $this->input->post('id');
+			$asignaturas 	= $this->m_asignaturas->get_asignaturas($id_facultad, $id_carrera, $id_curso, $id_asignatura);
+			if($asignaturas){
+				$asignaturas_ = $asignaturas->row_array();
+				echo $asignaturas_['asignatura'];
+			}
+		}
+	}
+	
+	function eliminar(){
+		if($session_data = $this->session->userdata('logged_in')){
+			if($session_data['id_rol'] == 1)
+				$id_facultad = $this->input->post('slc_facultad');
+			else
+				$id_facultad = $session_data["id_facultad"];		
+			$id_carrera 	= $this->input->post('slc_carrera');
+			$id_curso 		= $this->input->post('slc_curso');
+			$id_asignatura 	= $this->input->post('id');
+			$this->m_asignaturas->delete_asignaturas($id_facultad, $id_carrera, $id_curso, $id_asignatura);
+			$asignaturas 	= $this->m_asignaturas->get_asignaturas($id_facultad, $id_carrera, $id_curso);
+			$datos = array(
+				'asignaturas' => $asignaturas,
+				'msn' => 'Se elimino exitosamente',
+			);
+			$this->load->view('asignaturas/frm_crear_detalle', $datos, FALSE);
+		}
 	}
 }

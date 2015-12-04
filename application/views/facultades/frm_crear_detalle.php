@@ -49,18 +49,14 @@
 	if($facultades){
 		$contador = 1;
 		foreach($facultades->result() as $row){
+			$usuarios = $this->user->get_usuarios($row->id_facultad);
 			$carreras = $this->m_carreras->get_carreras($row->id_facultad);
-			if($carreras){
-				$eliminar = false;
-			}else{
-				$eliminar = true;
-			}
 			$this->table->add_row(array(
-					$contador ++,
-					$row->facultad,
-					date('d/m/Y', strtotime($row->creacion)),
-					($eliminar)? '<span class=eliminar id=' . $row->id_facultad . '>Eliminar</span>' :'En uso',
-				));	
+				$contador ++,
+				$row->facultad,
+				date('d/m/Y', strtotime($row->creacion)),
+				($carreras || $usuarios)? 'En uso' : '<span class=eliminar id=' . $row->id_facultad . '>Eliminar</span>',
+			));	
 		}
 		
 		if($facultades->num_rows() > 1)
@@ -71,8 +67,6 @@
 		$this->table->set_template(array('table_open' => '<table cellspacing= "0", border="1" class=detalles>'));
 		echo $this->table->generate();	
 		
-	}else{
-		echo 'No hay facultad registrado';
 	}
 
 ?>

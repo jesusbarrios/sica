@@ -8,9 +8,13 @@ class Crear extends CI_Controller {
 
 		parent::__construct();
 
+		$this->load->model('user');
 		$this->load->model('m_facultades', '', TRUE);
 		$this->load->model('m_carreras', '', TRUE);
-		if(!$this->session->userdata('logged_in'))
+		if($session = $this->session->userdata('logged_in')){
+			if($session['id_rol'] != 1)
+				redirect('', 'refresh');			
+		}else
 			redirect('', 'refresh');			
 	}
 
@@ -30,7 +34,7 @@ class Crear extends CI_Controller {
 		if ($this->form_validation->run()){			
 			$facultad 	= $this->input->post('txt_facultad');
 			$creacion 	= $this->input->post('txt_creacion');
-			$this->m_facultades->guardar($facultad, $creacion);
+			$this->m_facultades->insert_facultades($facultad, $creacion);
 			$msn = 'La facultad se agrego exitosamente';
 		}else{
 			$msn = false;
@@ -69,7 +73,7 @@ class Crear extends CI_Controller {
 
 	function eliminar(){
 		$id_facultad = $this->input->post('id');
-		$this->m_facultades->eliminar($id_facultad);
+		$this->m_facultades->delete_facultades($id_facultad);
 		$facultades = $this->m_facultades->get_facultades();
 		$datos = array(
 			'facultades'=> $facultades,

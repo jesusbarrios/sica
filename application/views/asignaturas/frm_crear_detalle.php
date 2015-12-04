@@ -7,147 +7,74 @@
 	
 	<script>
 		$('document').ready(function(){
-			$('.eliminar').click(function(args) {
-				carrera = $('#slc_carrera').val();
-				semestre = $('#slc_semestre').val();
-				asignatura = this.id;
-				$('#frm_msn').hide();
-				
-				$.post('<?=base_url()?>asignaturas/crear/obtener_nombre_asignatura', {slc_carrera : carrera, slc_semestre : semestre, asignatura : asignatura}, function (nombre_asignatura) {
-
-					if(confirm('Desea eliminar la asignatura "' + nombre_asignatura + '"?')){
-
-						$.post('<?=base_url()?>asignaturas/crear/eliminar', {slc_carrera : carrera, slc_semestre : semestre, asignatura : asignatura}, function (respuesta) {		
-								$('#detalle')
-								.html(respuesta)
-								.show('fast')
-						});
+			$('.eliminar').click(function() { 
+				facultad 	= $('#slc_facultad').val();
+				carrera 	= $('#slc_carrera').val();
+				curso 		= $('#slc_curso').val();
+				asignatura 	= this.id;
+				$.post('<?=base_url()?>index.php/asignaturas/crear/obtener_nombre', {slc_facultad : facultad, slc_carrera : carrera, slc_curso : curso, id : asignatura}, function (nombre) {
+					if(confirm('Seguro que quieres eliminar la asignatura "' + nombre + '"')){
+						$.post('<?=base_url()?>index.php/asignaturas/crear/eliminar', {slc_facultad : facultad, slc_carrera : carrera, slc_curso : curso, id : asignatura}, function (respuesta) {
+								$('#detalles').html(respuesta);
+						});	
 					}
 				});
-			})
+			});
 		});
 	</script>
-
+	
 	<style>
-		
-		 fieldset{
-			background-color: #EEEEEE;
-		    border-radius: 10px 10px 10px 10px;
-		    font-size: 11px;
-		    margin: 10px auto;
-		    padding: 10 33px;
-		    width: 600px;
-		    font-size: 13px;
+		.eliminar{
+			color: red;
 		}
-		 legend {
-		    background-color: #FFFFFF;
-		    border: 1px solid #A0A0A0;
-		    border-radius: 7px 7px 7px 7px;
-		    color: #000000;
-		    font-size: 15px;
-		    font-weight: bold;
-		    padding: 2px 20px;
+		.eliminar:hover{
+			cursor : pointer;
 		}
-		 label {
-		    color: #000000;
-		    float: left;
-		    font-size: 15px;
-		    margin-top: 0px;
-		    padding-right: 7px;
-		    text-align: right;
-		    vertical-align: top;
-		    width: 140px;
-		}
-
-/*
-		 .error{
-			color: #000000;
-		    background: none repeat scroll 0 0 #FF9E9E;
-		    border: 1px solid #AA8888;
-		    font-size: 13px;
-		    margin: 2px;
-		    padding: 1px;
-		    text-align: center;
-		}
-		 .ok{
-			color: #000000;
-		    background: none repeat scroll 0 0 #9EFF9E;
-		    border: 1px solid #88AA88;
-		    font-size: 13px;
-		    margin: 2px;
-		    padding: 1px;
-		    text-align: center;
-		}
-*/
-		 .campo_obligatorio {
-		    color: #FF0000;
-		    float: left;
-		    font-size: 11px;
-		    margin-top: 20px;
-		    padding: 0 2px;
-		}
-		
-		 table{
+		table.lista{
 			margin: 10px auto;
 		}
-		
-		 table td{
-			padding: 5px 3px;
-		}
-		
-		h3.titulo{
-			border-bottom : solid 1px #ffffee;
-			text-align: center;
-		}
-		#lista table td span.eliminar{
-			color: #bb0000;
-			text-decoration: underline;
-			cursor: pointer;
+		table.lista td{
+			padding: 3px;
 		}
 	</style>
+	
 </head>
 
 <body>
 <?php
-
-//	echo form_fieldset('Lista de Asignaturas');
+	//MENSAJE
+	if($msn)
+		echo "<div id=msn class=ok>$msn</div>";
 
 	if($asignaturas){
-
 		$contador = 1;
-
 		foreach($asignaturas->result() as $row){
-			$eliminar = false;
-			$correlatividades = $this->m_asignaturas->get_correlatividades($row->id_facultad, $row->id_carrera, $row->id_curso, $row->id_asignatura);
+			$correlatividades  = $this->m_asignaturas->get_correlatividades($row->id_facultad, $row->id_carrera, $row->id_curso, $row->id_asignatura);
+			$correlatividades2 = $this->m_asignaturas->get_correlatividades($row->id_facultad, $row->id_carrera, false, false, $row->id_curso, $row->id_asignatura);
+
 			if($correlatividades)
-				$eliminar = true;
-				
-			$correlatividades = $this->m_asignaturas->get_correlatividades($row->id_facultad, $row->id_carrera, false, false, $row->id_curso, $row->id_asignatura);
-			if($correlatividades)
-				$eliminar = true;
-				
+				$cant_correlatividades1 = $correlatividades->num_rows();
+			else
+				$cant_correlatividades1 = 0;
+
+			if($correlatividades2)
+				$cant_correlatividades2 = $correlatividades2->num_rows();
+			else
+				$cant_correlatividades2 = 0;
+
 			$this->table->add_row(array(
-				$contador ++,
-				$row->asignatura,
-				($eliminar)? '<span class=eliminar id=' . $row->id_asignatura . '>Eliminar</span>' : 'En uso',
-			));	
+					$contador ++,
+					$row->codigo,
+					$row->asignatura,
+					$cant_correlatividades1,
+					$cant_correlatividades2,
+					($correlatividades || $correlatividades2)? 'En uso' : '<span class=eliminar id=' . $row->id_asignatura . '>Eliminar</span>',
+				));	
 		}
-
-//		if($mostrar_eliminar)
-			$this->table->set_heading(array(null, array('data' => 'Asignaturas', 'colspan' => '2')));	
-//		else
-//			$this->table->set_heading(array(null, 'Asignaturas'));	
-		$this->table->set_template(array('table_open' => '<table cellspacing= "0", border="1">'));
-
-	}else{
-
-		$this->table->set_heading(array('No tiene asignatura'));
-
+		$this->table->set_heading(array('N<sup>ro</sup>', 'Código', 'Asignaturas', array('data' => 'Correlatividades', 'colspan' => 2), 'Opciones'));	
+		$this->table->set_template(array('table_open' => '<table cellspacing= "0", border="1" class=lista>'));
+		echo $this->table->generate();	
 	}
-
-	echo $this->table->generate();
-//	echo form_fieldset_close();	
-
 ?>
 </body>
 </html>
