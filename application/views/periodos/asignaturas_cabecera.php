@@ -14,44 +14,30 @@
 	    		$('.ok').hide('fast');
 	    	});
 
-	    	$('#slc_periodo').focus();
-
-	    	$('#txt_usuario').blur(function() {
-	    		$("#detalles").html("<h2>Cargando...</h2>");
-	    		usuario 	= $(this).val();
- 				$.post('<?=base_url()?>index.php/usuario/asignar_rol/actualizar_detalles', {txt_usuario : usuario}, function (respuesta) {
-					$('#detalles').html(respuesta);
+	    	$('#slc_facultad').change(function() {
+	    		$('#detalles').html("");
+	    		$('#slc_sede').html("<option value=>-----</option>");
+				$('#slc_carrera').html("<option value=>-----</option>");
+				$('#slc_tipo_curso').val('');
+				$('#txt_apertura').html(' ');
+				$('#txt_cierre').html(' ');
+	  			facultad 	= $(this).val();
+				$.post('<?=base_url()?>index.php/periodos/asignaturas/actualizar_slc_sede', {slc_facultad : facultad}, function (respuesta) {
+					$('#slc_sede').html(respuesta);
 				});
     		});
 
-	    	$('#slc_facultad').change(function() {
-	  			facultad 	= $(this).val();
-   				if(facultad){
-   					$.post('<?=base_url()?>index.php/periodos/asignaturas/cargar_slc_sede', {slc_facultad : facultad}, function (respuesta) {
-						$('#slc_sede').html(respuesta);
-					});
-				}else{
-					$('#slc_sede').html("<option value=>-----</option>");
-					$('#slc_carrera').html("<option value=>-----</option>");
-					$('#slc_semestre').html("<option value=>-----</option>");
-					$('#slc_asignatura').html("<option value=>-----</option>");
-					$('#detalles').html("");
-				}
-    		});
-
     		$('#slc_sede').change(function() {
-    			facultad 	= $('#slc_facultad').val();
-	  			sede 		= $(this).val();
-   				if(sede){
-   					$.post('<?=base_url()?>index.php/periodos/asignaturas/cargar_slc_carrera', {slc_facultad : facultad, slc_sede : sede}, function (respuesta) {
-						$('#slc_carrera').html(respuesta);
-					});
-				}else{
-					$('#slc_carrera').html("<option value=>-----</option>");
-					$('#slc_semestre').html("<option value=>-----</option>");
-					$('#slc_asignatura').html("<option value=>-----</option>");
-					$('#detalles').html("");
-				}
+    			$('#detalles').html("");
+				$('#slc_carrera').html("<option value=>-----</option>");
+				$('#slc_tipo_curso').val('');
+				$('#txt_apertura').html(' ');
+				$('#txt_cierre').html(' ');
+				facultad 	= $('#slc_facultad').val();
+				sede 		= $(this).val();
+				$.post('<?=base_url()?>index.php/periodos/asignaturas/actualizar_slc_carrera', {slc_facultad : facultad, slc_sede : sede}, function (respuesta) {
+					$('#slc_carrera').html(respuesta);
+				});
     		});
 
     		$('#slc_carrera').change(function() {
@@ -198,18 +184,24 @@
 		/*
 		*PERIODOS
 		*/
-		if($slc_periodo){
-			$this->table->add_row(array(
-				form_label('Periodo:', 'slc_periodo'),
-				form_dropdown('slc_periodo', $slc_periodo, set_value('slc_periodo'), 'id=slc_periodo')
-				. form_error('slc_periodo', '<div class="error">', '</div>'),
-			));
-		}
+		$slc_periodo = array('' => '-----');
+		if($periodos)
+			foreach ($periodos->result() as $periodos_)
+				$slc_periodo[$periodos_->id_periodo] = $periodos_->id_periodo;
+
+		$this->table->add_row(array(
+			form_label('Periodo:', 'slc_periodo'),
+			form_dropdown('slc_periodo', $slc_periodo, set_value('slc_periodo'), 'id=slc_periodo')
+			. form_error('slc_periodo', '<div class="error">', '</div>'),
+		));
 
 		/*
 		*FACULTADES
 		*/
-		if($slc_facultad){
+		if($facultades){
+			 $slc_facultad = array('' => '-----');
+			foreach ($facultades->result() as $facultades_)
+				$slc_facultad[$facultades_->id_facultad] = $facultades_->facultad;
 			$this->table->add_row(array(
 				form_label('Facultad:', 'slc_facultad'),
 				form_dropdown('slc_facultad', $slc_facultad, set_value('slc_facultad'), 'id=slc_facultad')
@@ -220,151 +212,63 @@
 		/*
 		*SEDES
 		*/
-		if($slc_sede){
-			$this->table->add_row(array(
-				form_label('Sede:', 'slc_sede'),
-				form_dropdown('slc_sede', $slc_sede, set_value('slc_sede'), 'id=slc_sede $estado_slc_sede')
-				. form_error('slc_sede', '<div class="error">', '</div>'),
-			));
-		}
+		$slc_sede = array('' => '-----');
+		if($sedes)
+			foreach ($sedes->result() as $sedes_) 
+				$slc_sede[$sedes_->id_sede] = $sedes_->sede;
+		$this->table->add_row(array(
+			form_label('Sede:', 'slc_sede'),
+			form_dropdown('slc_sede', $slc_sede, set_value('slc_sede'), 'id=slc_sede $estado_slc_sede')
+			. form_error('slc_sede', '<div class="error">', '</div>'),
+		));
+
 		
 		/*
 		*
 		CARRERAS
 		*
 		*/
-		if($slc_carrera){
-			$this->table->add_row(array(
-				form_label('Carrera:', 'slc_carrera'),
-				form_dropdown('slc_carrera', $slc_carrera, set_value('slc_carrera'), 'id=slc_carrera $estado_slc_carrera')
-				. form_error('slc_carrera', '<div class="error">', '</div>'),
-			));
-		}
+		$slc_carrera = array('' => '-----');
+		if($carreras)
+			foreach ($carreras->result() as $carreras_) 
+				$slc_carrera[$carreras_->id_carrera] = $carreras_->carrera;
+		$this->table->add_row(array(
+			form_label('Carrera:', 'slc_carrera'),
+			form_dropdown('slc_carrera', $slc_carrera, set_value('slc_carrera'), 'id=slc_carrera $estado_slc_carrera')
+			. form_error('slc_carrera', '<div class="error">', '</div>'),
+		));
+
 
 		/*
 		*
 		SEMESTRES
 		*
 		*/
-		if($slc_semestre){
-			$this->table->add_row(array(
-				form_label('Semestre:', 'slc_semestre'),
-				form_dropdown('slc_semestre', $slc_semestre, set_value('slc_semestre'), 'id=slc_semestre')
-				. form_error('slc_semestre', '<div class="error">', '</div>'),
-			));
-		}
-
-		/*
-		*
-		ASIGNATURAS
-		*
-		*/
-		if($slc_asignatura){
-			$this->table->add_row(array(
-				form_label('Asignatura:', 'slc_asignatura'),
-				form_dropdown('slc_asignatura', $slc_asignatura, set_value('slc_asignatura'), 'id=slc_asignatura')
-				. form_error('slc_asignatura', '<div class="error">', '</div>'),
-			));
-		}
-
-		/*
-		*
-		*DOCENTES
-		*
-		*/
-/*		$txt_docente = array(
-			'type'			=> 'input',
-			'name'			=> 'txt_docente',
-			'id'			=> 'txt_docente',
-			'maxlength'		=> '100',
-			'size'			=> '50',
-			'autocomplete'	=> 'Off',
-			'list'			=> 'opciones',
-			'value'			=> set_value('txt_docente'),
+		$slc_tipo_curso = array(
+			''		=> '-----',
+			'CPI'	=> 'CPI',
+			'Impar'	=> 'Impar',
+			'Par'	=> 'Par',
 		);
-		if(set_value('slc_asignatura') == 'todas' || !set_value('slc_asignatura'))
-			$txt_docente['disabled'] = 'disabled';
-
-		$opciones = "<datalist id='opciones'>";
-		if($docentes)
-//			foreach($docentes->result() as $row)
-//				$opciones .= "<option value='$row->nombre $row->apellido $row->documento'>";
-			
-		$opciones .= "</datalist>";
-
 		$this->table->add_row(array(
-			form_label('Docente:', 'txt_docente'),
-			form_input($txt_docente) . $opciones
-			. form_error('txt_docente', '<div class="error">', '</div>'),
+			form_label('Tipo de curso:', 'slc_tipo_curso'),
+			form_dropdown('slc_tipo_curso', $slc_tipo_curso, set_value('slc_tipo_curso'), 'id=slc_tipo_curso')
+			. form_error('slc_tipo_curso', '<div class="error">', '</div>'),
 		));
 
-		/*
-		*DIAS DE CLASE
-		*/
-
-
-/*		$slc_dia = array('' => '-----', '2' => 'Lunes', '3' => 'Martes', '4' => 'Miercoles', '5' => 'Jueves', '6' => 'Viernes', '7' => 'Sabado', '1' => 'Domingo');
-		if((set_value('slc_asignatura') == 'todas' || !set_value('slc_asignatura'))){
-			$this->table->add_row(array(
-				form_label('Día:', 'slc_dia'),
-				form_dropdown('slc_dia', $slc_dia, set_value('slc_dia'), 'id = slc_dia disabled')
-				. form_error('slc_dia', '<div class="error">', '</div>'),
-			));
-		}else{
-			$this->table->add_row(array(
-				form_label('Día:', 'slc_dia'),
-				form_dropdown('slc_dia', $slc_dia, set_value('slc_dia'), 'id=slc_dia' )
-				. form_error('slc_dia', '<div class="error">', '</div>'),
-			));
-		}
-
-		/*
-		*DESDE
-		*/
-
-/*		$txt_desde = array(
-			'type' 		=> 'time',
-			'name'		=> 'txt_desde',
-			'id'		=> 'txt_desde',
+		$txt_apertura = array(
+			'type' 		=> 'date',
+			'name'		=> 'txt_apertura',
+			'id'		=> 'txt_apertura',
 			'maxlength'	=> '10',
-			'size'		=> '8',
-			'value'		=> set_value('txt_desde'),
+			'value'		=> set_value('txt_apertura'),
 		);
 
-		if(set_value('slc_asignatura') == 'todas' || !set_value('slc_asignatura'))
-			$txt_desde['disabled'] = 'disabled';
-
 		$this->table->add_row(array(
-			form_label('Desde:', 'txt_desde'),
-			form_input($txt_desde)
-			. form_error('txt_desde', '<div class="error">', '</div>'),
+			form_label('Apertura:', 'txt_apertura'),
+			form_input($txt_apertura)
+			. form_error('txt_apertura', '<div class="error">', '</div>'),
 		));
-
-		/*
-		*HASTA
-		*/
-
-/*		$txt_hasta = array(
-			'type' 		=> 'time',
-			'name'		=> 'txt_hasta',
-			'id'		=> 'txt_hasta',
-			'maxlength'	=> '10',
-			'size'		=> '8',
-			'value'		=> set_value('txt_hasta'),
-		);
-
-		if(set_value('slc_asignatura') == 'todas' || !set_value('slc_asignatura'))
-			$txt_hasta['disabled'] = 'disabled';
-
-		$this->table->add_row(array(
-			form_label('Hasta:', 'txt_hasta'),
-			form_input($txt_hasta)
-			. form_error('txt_hasta', '<div class="error">', '</div>'),
-		));
-
-		/*
-		*CIERRE DE INSCRIPCION
-		*/
 
 		$txt_cierre = array(
 			'type' 		=> 'date',
@@ -375,7 +279,7 @@
 		);
 
 		$this->table->add_row(array(
-			form_label('Cierre de inscripción:', 'txt_cierre'),
+			form_label('Cierre:', 'txt_cierre'),
 			form_input($txt_cierre)
 			. form_error('txt_cierre', '<div class="error">', '</div>'),
 		));
@@ -392,12 +296,8 @@
 			false,
 			form_submit($boton),
 		));
-/*
-		if($detalles)
-			$this->table->add_row(array('data' => $detalles, 'colspan' => 2, 'id' => 'detalles'));
-		else
-			$this->table->add_row(array('data' => '', 'colspan' => 2, 'id' => 'detalles', 'style' => 'display:none'));
-*/		
+		$this->table->add_row(array('data' => $detalles, 'colspan' => 2, 'id' => 'detalles'));
+
 		$this->table->set_template(array ( 'table_open'  => '<table border="0" cellpadding="2" cellspacing="0" class="cabecera">' ));
 		echo $this->table->generate();
 		echo form_fieldset_close();

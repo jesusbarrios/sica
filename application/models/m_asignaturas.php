@@ -97,25 +97,7 @@ class M_asignaturas extends CI_Model{
 			return true;
 		return false;
 	}
-/*
-	function existe_correlatividad($facultad, $carrera, $semestre1, $asignatura1, $semestre2, $asignatura2){
-		$datos =  array(
-			'id_facultad' => $facultad,
-			'id_carrera' => $carrera,
-			'id_semestre1' => $semestre1,
-			'id_asignatura1' => $asignatura1,
-			'id_semestre2' => $semestre2,
-			'id_asignatura2' => $asignatura2
-		);
 
-		$result = $this->db->get_where('correlatividades', $datos);
-
-		if($result->num_rows > 0)
-			return true;
-
-		return false;
-	}
-*/	
 	function delete_correlatividades($id_facultad = false, $id_carrera = false, $id_curso1 = false, $id_asignatura1 = false, $id_curso2, $id_asignatura2 = false){
 		if($id_facultad)
 			$this->db->where('id_facultad', $id_facultad);

@@ -68,53 +68,71 @@
 	<link rel="stylesheet" href="<?=base_url()?>css/frm_login.css" type="text/css" />
 
 	<style>
-		table.detalles span{
+		#lista fieldset{
+			background-color: #EEEEEE;
+		    border-radius: 10px 10px 10px 10px;
+		    font-size: 11px;
+		    margin: 0 auto;
+		    padding: 10 33px;
+		    width: 600px;
+		    font-size: 13px;
+		}
+
+		#lista legend {
+		    background-color: #FFFFFF;
+		    border: 1px solid #A0A0A0;
+		    border-radius: 7px 7px 7px 7px;
+		    color: #000000;
+		    font-size: 15px;
+		    font-weight: bold;
+		    padding: 2px 20px;
+		}
+
+		#lista table{
+			margin: 10px auto;
+		}
+
+		#lista table td{
+			padding: 1px 10px;
+		}
+
+		#lista table td span.eliminar{
+			color: #bb0000;
+			text-decoration: underline;
 			cursor: pointer;
 		}
-		table.detalles td{
-			padding: 1px;
+
+		#lista table tr:hover{
+			background-color: #ffeeee;
+		}
+		
+		.eliminar{
+			color : red;
+		}
+		
+		.eliminar:hover{
+			cursor: pointer;
 		}
 	</style>
 </head>
 
 <body>
-	<?php
-		
-		if($docentes){
-			foreach ($docentes->result() as $row) {
-				$campo = $row->id_persona . $row->id_facultad . $row->id_sede . $row->id_rol;
-				$sp_facultad 	= 'facultad_' . $campo;
-				$sp_sede 		= 'sede_' . $campo;
-				$sp_rol 		= 'rol_' . $campo; 
-
-				if($row->usuario_estado){
-					$this->table->add_row(array(
-						"<span class='$sp_facultad' value= $row->id_facultad >$row->facultad</span>",
-						"<span class='$sp_sede' value= $row->id_sede >$row->sede</span>",
-						"<span class='$sp_rol' value= $row->id_rol >$row->rol</span>",
-						"<span value=$campo class='deshabilitar'>Deshabilitar</span>",
-						"<span value=$campo class='eliminar' >Eliminar</span>",
-					));
-				}else{
-					$this->table->add_row(array(
-						"<span class='$sp_facultad' value= $row->id_facultad >$row->facultad</span>",
-						"<span class='$sp_sede' value= $row->id_sede >$row->sede</span>",
-						"<span class='$sp_rol' value= $row->id_rol >$row->rol</span>",
-						"<span value=$campo class='habilitar'>Habilitar</span>",
-						"<span value=$campo class='eliminar' >Eliminar</span>",
-					));
-				}
-			}
-			if($usuarios->num_rows() > 1)
-				$this->table->set_heading('Facultades', 'Sedes', 'Roles', array('data' => 'Opciones', 'colspan' => 2));
-			else
-				$this->table->set_heading('Facultad', 'Sede', 'Rol', array('data' => 'Opciones', 'colspan' => 2));
-		}else{
-			$this->table->add_row(array('No hay usuario relacionado con la persona.'));
+<?php
+	if($inscripciones){
+		$contador = 1;
+		foreach ($inscripciones->result() as $row) {
+			$inscripcion_detalles = $this->m_inscripciones->get_detalles_inscripcion($row->id_periodo, $row->id_facultad, $row->id_sede, $row->id_carrera, $row->id_curso);
+			$this->table->add_row(array(
+				$contador ++,
+				$row->curso,
+				($row->estado)? 'Deshabilitar' : 'Habilitar',
+				($inscripciones)? 'En uso' : 'Eliminar',
+			));
 		}
+		$this->table->set_heading(array('Item', 'Cursos', array('data' => 'Opciones', 'colspan' => 2)));
 		$this->table->set_template(array ( 'table_open'  => '<table border="1" cellpadding="2" cellspacing="0" class="detalles">' ));
 		echo $this->table->generate();
-		
-	?>
+	}
+?>
 </body>
 </html>

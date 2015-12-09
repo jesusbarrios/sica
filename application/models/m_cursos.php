@@ -2,7 +2,7 @@
 
 class M_cursos extends CI_Model{
 
-	function get_cursos($id_facultad = false, $id_carrera = false, $id_curso = false, $curso = false){
+	function get_cursos($id_facultad = false, $id_carrera = false, $id_curso = false, $curso = false, $tipo_curso = false, $estado = false){
 		if($id_facultad)
 			$this->db->where('id_facultad', $id_facultad);
 		if($id_carrera)
@@ -11,7 +11,10 @@ class M_cursos extends CI_Model{
 			$this->db->where('id_curso', $id_curso);
 		if($curso)
 			$this->db->where('curso', $curso);
-
+		if($tipo_curso)
+			$this->db->where('tipo_curso', $tipo_curso);
+		if($estado)
+			$this->db->where('estado', $estado);
 		$this->db->order_by('cursos.id_curso', 'asc');
 		$cursos = $this->db->get('cursos');
 

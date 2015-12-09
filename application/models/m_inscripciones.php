@@ -3,35 +3,69 @@
 class M_inscripciones extends CI_Model{
 
 	/*
-	*INSCRIPCIONES
+	*INSCRIPCIONES SEMESTRAL
 	*
 	*/
+	function insert_inscripcion($id_periodo, $id_facultad, $id_sede, $id_carrera, $id_curso, $id_asignatura, $fecha, $apertura, $cierre, $estado){
+		$datos = array(
+			'id_periodo' => $id_periodo,
+			'id_facultad' => $id_facultad,
+			'id_sede' => $id_sede,
+			'id_carrera' => $id_carrera,
+			'id_curso' => $id_curso,
+			'id_asignatura' => $id_asignatura,
+			'fecha' => $fecha,
+			'apertura' => $apertura, 
+			'cierre' => $cierre,
+			'estado' => $estado,
+		);
+		$this->db->insert('inscripciones', $datos);
+	}
+
+	function update_inscripcion($id_periodo, $id_facultad, $id_sede, $id_carrera, $id_curso, $id_asignatura, $fecha, $apertura, $cierre, $estado){
+		if($periodo)
+			$this->db->where('id_periodo', $periodo);
+		if($facultad)
+			$this->db->where('id_facultad', $facultad);
+		if($sede)
+			$this->db->where('id_sede', $sede);
+		if($carrera)
+			$this->db->where('id_carrera', $carrera);
+		if($curso)
+			$this->db->where('id_curso', $curso);
+		if($asignatura)
+			$this->db->where('id_asignatura', $asignatura);
+
+		if($apertura)
+			$datos['apertura'] 	= $apertura;
+		if($cierre)
+			$datos['cierre'] 	= $cierre;
+		$datos['estado'] = $estado;
+
+		$this->db->update('inscripciones', $datos);
+	}
 
 	function get_inscripciones($periodo = false, $facultad = false, $sede = false, $carrera = false, $curso = false, $asignatura = false){
 		
 		$this->db->select('*');
-		if(!$periodo)
-			$this->db->order_by('t1.id_periodo', 'desc');
-
+		
+		if($periodo)
+			$this->db->where('t1.id_periodo', $periodo);
 		if($facultad)
 			$this->db->where('t1.id_facultad', $facultad);
-
 		if($sede)
 			$this->db->where('t1.id_sede', $sede);
-			
 		if($carrera)
 			$this->db->where('t1.id_carrera', $carrera);
-
 		if($curso)
 			$this->db->where('t1.id_curso', $curso);
-		
 		if($asignatura)
 			$this->db->where('t1.id_asignatura', $asignatura);
 
-		if($periodo)
-			$this->db->where('t1.id_periodo', $periodo);
-
-		if($periodo && !$facultad){
+		if(!$periodo){
+			$this->db->group_by('t1.id_periodo');
+			$this->db->order_by('t1.id_periodo', 'desc');
+		}else if($periodo && !$facultad){
 			$this->db->group_by('t1.id_facultad');
 			$this->db->order_by('t1.id_facultad', 'asc');
 		}else if($periodo && $facultad && !$sede){
@@ -40,12 +74,12 @@ class M_inscripciones extends CI_Model{
 		}else if($periodo && $facultad && $sede && !$carrera){
 			$this->db->group_by('t1.id_carrera');
 			$this->db->order_by('t1.id_carrera', 'desc');
-		}else if($periodo && $facultad && $sede && $carrera && !$semestre){
-			$this->db->group_by('t4.id_curso');
-			$this->db->order_by('t4.id_curso', 'asc');
-		}else if($periodo && $facultad && $sede && $carrera && $semestre && !$asignatura){
+		}else if($periodo && $facultad && $sede && $carrera && !$curso){
+			$this->db->group_by('t1.id_curso');
+			$this->db->order_by('t1.id_curso', 'asc');
+		}else if($periodo && $facultad && $sede && $carrera && $curso && !$asignatura){
 			$this->db->group_by('t1.id_asignatura');
-			$this->db->order_by('t4.id_curso', 'asc');
+			$this->db->order_by('t1.id_curso', 'asc');
 		}
 
 		$this->db->join('facultades', 'facultades.id_facultad = t1.id_facultad');
@@ -62,9 +96,59 @@ class M_inscripciones extends CI_Model{
 	}
 	
 	/*
-	*INSCRIPCIONES EVALUACION
+	*INSCRIPCIONES DETALLES
 	*
 	*/
+	function get_detalles_inscripcion($periodo = false, $facultad = false, $sede = false, $carrera = false, $curso = false, $asignatura = false){
+		
+		$this->db->select('*');
+		
+		if($periodo)
+			$this->db->where('t1.id_periodo', $periodo);
+		if($facultad)
+			$this->db->where('t1.id_facultad', $facultad);
+		if($sede)
+			$this->db->where('t1.id_sede', $sede);
+		if($carrera)
+			$this->db->where('t1.id_carrera', $carrera);
+		if($curso)
+			$this->db->where('t1.id_curso', $curso);
+		if($asignatura)
+			$this->db->where('t1.id_asignatura', $asignatura);
+
+		if(!$periodo){
+			$this->db->group_by('t1.id_periodo');
+			$this->db->order_by('t1.id_periodo', 'desc');
+		}else if($periodo && !$facultad){
+			$this->db->group_by('t1.id_facultad');
+			$this->db->order_by('t1.id_facultad', 'asc');
+		}else if($periodo && $facultad && !$sede){
+			$this->db->group_by('t1.id_sede');
+			$this->db->order_by('t1.id_sede', 'asc');
+		}else if($periodo && $facultad && $sede && !$carrera){
+			$this->db->group_by('t1.id_carrera');
+			$this->db->order_by('t1.id_carrera', 'desc');
+		}else if($periodo && $facultad && $sede && $carrera && !$curso){
+			$this->db->group_by('t1.id_curso');
+			$this->db->order_by('t1.id_curso', 'asc');
+		}else if($periodo && $facultad && $sede && $carrera && $curso && !$asignatura){
+			$this->db->group_by('t1.id_asignatura');
+			$this->db->order_by('t1.id_curso', 'asc');
+		}
+
+		$this->db->join('facultades', 'facultades.id_facultad = t1.id_facultad');
+		$this->db->join('sedes', 'sedes.id_sede = t1.id_sede');
+		$this->db->join('carreras', 'carreras.id_facultad = t1.id_facultad AND carreras.id_carrera = t1.id_carrera');
+		$this->db->join('cursos as t4', 't4.id_facultad = t1.id_facultad AND t4.id_carrera = t1.id_carrera AND t4.id_curso = t1.id_curso');
+		$this->db->join('asignaturas as t5', 't5.id_facultad = t1.id_facultad AND t5.id_carrera = t1.id_carrera AND t5.id_curso = t1.id_curso AND t5.id_asignatura = t1.id_asignatura');
+
+		$inscripciones = $this->db->get('detalles_inscripcion as t1');
+
+		if($inscripciones->result())
+			return $inscripciones;
+		return false;
+	}
+
 	
 	function guardar_inscripcion_evaluacion($id_facultad, $id_sede, $id_carrera, $id_semestre, $periodo, $id_persona, $id_asignatura, $oportunidad = false, $calificacion = false, $fecha){
 		$datos = array(
@@ -198,39 +282,6 @@ class M_inscripciones extends CI_Model{
 		
 		if($result->result())
 			return $result;
-		return false;
-	}
-	
-	function get_detalles_inscripcion($periodo = false, $facultad = false, $sede = false, $carrera = false, $semestre = false, $asignatura = false){
-		
-		$this->db->select('*');
-		if($periodo)
-			$this->db->where('t1.id_periodo', $periodo);
-
-		if($facultad)
-			$this->db->where('t1.id_facultad', $facultad);
-
-		if($sede)
-			$this->db->where('t1.id_sede', $sede);
-			
-		if($carrera)
-			$this->db->where('t1.id_carrera', $carrera);
-
-		if($semestre)
-			$this->db->where('t1.id_semestre', $semestre);
-		
-		if($asignatura)
-			$this->db->where('t1.id_asignatura', $asignatura);
-
-		$this->db->join('personas as t2', 't2.id_persona = t1.id_persona');
-		$this->db->join('documentos as t3', 't3.id_persona = t1.id_persona');
-		$this->db->group_by('t1.id_persona');
-
-		$detalles_inscripcion = $this->db->get('detalles_inscripcion as t1');
-
-//		return "periodo - $periodo facultad- $facultad sede- $sede carrera- $carrera semestre- $semestre asignatura- $asignatura";	
-		if($detalles_inscripcion->result())
-			return $detalles_inscripcion;
 		return false;
 	}
 	

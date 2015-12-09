@@ -13,7 +13,6 @@ class Crear extends CI_Controller {
 		$this->load->model('m_cursos', '', TRUE);
 		$this->load->model('m_asignaturas', '', TRUE);
 		$this->load->model('m_inscripciones', '', TRUE);
-//		$this->load->model('m_inscripcion', '', TRUE);
 
 		if($session = $this->session->userdata('logged_in')){
 			if($session['id_rol'] != 1 && $session['id_rol'] != 3)

@@ -1,5 +1,5 @@
 <?php
-class M_periodo extends CI_Model{
+class M_periodos extends CI_Model{
 
 	function insert_periodos($id_periodo, $estado){
 		$datos = array(
